@@ -1,0 +1,67 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    --foreground-start: 12 182 114;
+    --light: 239 239 239;
+    --dark: 32 32 32;
+    --foreground-end: 255 255 255;
+  }
+
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --foreground-start: 12 182 114;
+      --foreground-end: 0 0 0;
+    }
+  }
+
+  body {
+    @apply font-lato;
+    //background: linear-gradient(180deg, transparent 0, transparent 320px, rgb(var(--foreground-start)) 0, rgb(var(--foreground-end)) 100%);
+    background: rgb(var(--light))
+
+  }
+}
+
+.wrapper {
+  @apply bg-white mt-14 z-50 relative mb-8;
+  box-shadow: 0 30px 50px 0 rgba(1, 1, 1, .15);
+}
+
+.content {
+  @apply overflow-hidden mt-10 mx-auto container max-w-screen-xl;
+  min-height: calc(100vh - 2.5rem - 3.5rem - 2rem - 6rem - 0.5rem) /* .content magin top .wrapper magin top/bottom - header height - heder margin top */
+}
+
+.title {
+  @apply relative text-lg text-dark text-center uppercase;
+}
+
+.title h1:after {
+  content: "";
+  height: 1px;
+  width: 50px;
+  position: absolute;
+  bottom: 0;
+  left: 50%;
+  margin-left: -25px;
+  background: rgb(var(--light))
+}
+
+.button {
+  @apply inline-block p-0 no-underline text-center text-lg border-green-600 outline-none h-9 font-semibold
+         translate-y-0 leading-normal bg-primary text-white uppercase border border-solid rounded;
+  min-width: 200px;
+  padding-top: 2px;
+  transition: all .1s ease-in-out;
+
+  &:visited {
+    @apply  bg-primary;
+  }
+
+  &:hover {
+    @apply  bg-primary-dark;
+  }
+}

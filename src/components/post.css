@@ -1,0 +1,55 @@
+article {
+  @apply flex p-8;
+}
+
+.blog-date {
+  @apply flex flex-col w-1/5 items-end relative pr-8;
+}
+
+.blog-date:before {
+  @apply absolute block bg-gray-200 z-20 top-6 right-0 w-[1px] h-full;
+  content: "";
+}
+
+.blog-date:after {
+  @apply absolute block bg-primary z-30 top-5 w-3 h-3;
+  content: "";
+  border-radius: 50%;
+  right: -5px;
+}
+
+.blog-post {
+  @apply flex flex-col w-4/5 pl-8 text-gray-700 text-lg;
+}
+
+.blog-content .more {
+  @apply hidden;
+}
+
+.blog-content.blog-complete .more {
+  @apply block;
+}
+
+.blog-post p {
+    @apply my-4;
+  }
+
+.day {
+  @apply uppercase text-7xl font-bold text-primary font-satisfy;
+}
+
+.month {
+  @apply uppercase text-lg font-bold font-satisfy;
+}
+
+.post-title {
+  @apply uppercase text-3xl font-bold mb-4;
+}
+
+.blog-date {
+  @apply text-gray-500 text-base;
+}
+
+.buttons {
+  @apply mt-2;
+}
