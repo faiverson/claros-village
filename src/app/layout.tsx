@@ -2,7 +2,7 @@ import './globals.css'
 import type { Metadata } from 'next'
 import { NextFontWithVariable } from 'next/dist/compiled/@next/font'
 import { Lato, Satisfy } from 'next/font/google'
-import Header from 'components/layout/header';
+import Header from 'components/layout/header'
 
 const lato: NextFontWithVariable = Lato({
   weight: ['100', '300', "400", "700", "900"],
@@ -20,16 +20,39 @@ const satisfy: NextFontWithVariable = Satisfy({
   variable: '--font-satisfy',
 })
 
+
 export const metadata: Metadata = {
-  title: 'Barrio Claros Village',
+  title: {
+    template: '%s | Claros Village',
+    default: 'Barrio Claros Village'
+  },
+  keywords: ['Claros', 'Claros Village', 'barrio', 'barrio claros village'],
   description: 'Información relevante al barrio Claros Village de la ciudad de Córdoba',
+  authors: [{ name: 'Fabian Torres' }],
+  themeColor: [
+    { media: '(prefers-color-scheme: light)', color: 'white' },
+    { media: '(prefers-color-scheme: dark)', color: 'green' },
+  ],
+  creator: 'Fabian Torres',
+  publisher: 'Fabian Torres',
+  robots: {
+    index: true,
+    follow: true,
+    googleBot: {
+      index: true,
+      follow: true,
+      "max-video-preview": -1,
+      "max-image-preview": "large",
+      "max-snippet": -1,
+    },
+  }
 }
 
 export default function RootLayout({
   children,
 }: {
   children: React.ReactNode
-}) {
+  }) {
   return (
     <html lang="es" className={`${lato.variable} ${satisfy.variable}`}>
       <body>

@@ -32,7 +32,12 @@
 
 .content {
   @apply overflow-hidden mt-10 mx-auto container max-w-screen-xl;
-  min-height: calc(100vh - 2.5rem - 3.5rem - 2rem - 6rem - 0.5rem) /* .content magin top .wrapper magin top/bottom - header height - heder margin top */
+  min-height: calc(100vh - 2.5rem - 3.5rem - 2rem - 6rem - 0.5rem); /* .content magin top .wrapper magin top/bottom - header height - heder margin top */
+  min-width: 1280px;
+
+  &.reglamento {
+    margin: 0;
+  }
 }
 
 .title {
@@ -48,6 +53,14 @@
   left: 50%;
   margin-left: -25px;
   background: rgb(var(--light))
+}
+
+.nav-wrapper-link {
+  @apply flex gap-1 items-center;
+}
+
+.nav-icon {
+  @apply h-6 text-white
 }
 
 .button {
