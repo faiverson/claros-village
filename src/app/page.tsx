@@ -6,6 +6,25 @@ export default function Home() {
     <section className='content'>
       <h1 className='title'>Últimas Novedades</h1>
       <div className='main'>
+        <Post day="04" month="Octubre" year="2023" title="Nuevo Oficial de Control">
+          <>
+            <p>Queremos compartir con ustedes importantes novedades relacionadas con la seguridad en nuestro barrio.</p>
+            <div className='more'>
+              <p>A partir del 1 de octubre, hemos implementado una serie de cambios que consideramos esenciales para mejorar la seguridad.</p>
+              <p>En primer lugar, hemos reemplazado la posición de asesor de seguridad, que anteriormente ocupaba el suboficial Gustavo Ulloa, por la de oficial de control, a cargo del oficial Lucas Ramón Agulles Gaviglio. Una de las diferencias fundamentales es que el oficial de control es designado directamente por el Departamento de Policía Adicional de la provincia de Córdoba, lo que significa que tanto sus ausencias como cualquier ajuste en su salario estarán sujetos a los acuerdos y convenios establecidos por la policía, garantizando una mayor transparencia. Además, es relevante destacar que el rango de oficial es el más alto dentro de la jerarquía policial.</p>
+              <p>Las responsabilidades principales de este oficial comprenden:</p>
+              <ul className='list-disc'>
+                <li>Elaborar informes sobre cualquier anomalía detectada.</li>
+                <li>Supervisar el cumplimiento de los protocolos de seguridad por parte de los efectivos y el presentismo del personal.</li>
+                <li>Brindar recomendaciones y asesoramiento en materia de seguridad.</li>
+                <li>Mantener comunicación continua con la entidad e informar las novedades diarias relacionadas.</li>
+                <li>Fiscalizar planillas y designaciones de los efectivos en lo que respecta la tarea administrativa.</li>
+              </ul>
+              <p>Como segunda medida, tenemos la construcción de un nuevo puesto de seguridad (Puesto 2), ya que el actual no cumple con los requisitos necesarios para funcionar como un puesto fijo. Estamos evaluando un presupuesto que requerirá una inversión significativa.</p>
+              <p>Continuaremos informando acerca de los nuevos avances. </p>
+            </div>
+          </>
+        </Post>
         <Post day="26" month="Septiembre" year="2023" title="Reunion Informativa">
           <>
             <p>Queremos expresar nuestro sincero agradecimiento a todos los que asistieron a la reunión, es realmente gratificante ver tanto interés y nos da motivación para seguir mejorando este hermoso barrio. Su presencia es fundamental y apreciada. Nos vamos a contactar con aquellos que desean participar. Algunos otros también quieren participar y vamos a buscar alternativas para los que quieran colaborar aunque sea de manera indirecta.</p>
