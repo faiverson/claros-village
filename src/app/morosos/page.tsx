@@ -1,19 +1,20 @@
 'use client'
 
-// import { Metadata } from 'next'
 import { useState } from 'react'
 import { upload, MorososResult, User } from '../server/actions/upload'
-
-// export const metadata: Metadata = {
-//   title: 'Morosos',
-// }
 
 export default function Page() {
   const [users, setUsers] = useState<MorososResult | null>()
 
   const onSubmit = async (formData: FormData) => {
-    const data: MorososResult = await upload(formData)
-    setUsers(data)
+    console.log(formData)
+    const fileInput = formData.get('file') as File
+
+    if (fileInput.size > 0) {
+      const data: MorososResult = await upload(formData)
+      setUsers(data)
+    }
+
   }
 
   const onDownload = async () => {
