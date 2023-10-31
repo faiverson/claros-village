@@ -1,5 +1,5 @@
 import './globals.css'
-import type { Metadata } from 'next'
+import { Viewport, Metadata } from 'next'
 import { NextFontWithVariable } from 'next/dist/compiled/@next/font'
 import { Lato, Satisfy } from 'next/font/google'
 import Header from 'components/layout/header'
@@ -25,6 +25,12 @@ const satisfy: NextFontWithVariable = Satisfy({
   variable: '--font-satisfy',
 })
 
+export const viewport: Viewport = {
+  themeColor: [
+    { media: '(prefers-color-scheme: light)', color: 'white' },
+    { media: '(prefers-color-scheme: dark)', color: 'green' },
+  ],
+}
 
 export const metadata: Metadata = {
   title: {
@@ -34,10 +40,6 @@ export const metadata: Metadata = {
   keywords: ['Claros', 'Claros Village', 'barrio', 'barrio claros village'],
   description: 'Información relevante al barrio Claros Village de la ciudad de Córdoba',
   authors: [{ name: 'Fabian Torres' }],
-  themeColor: [
-    { media: '(prefers-color-scheme: light)', color: 'white' },
-    { media: '(prefers-color-scheme: dark)', color: 'green' },
-  ],
   creator: 'Fabian Torres',
   publisher: 'Fabian Torres',
   robots: {

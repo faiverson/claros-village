@@ -3,6 +3,8 @@ import * as path from 'path'
 import csv from 'csv-parser'
 import XLSX from 'xlsx'
 
+// create a list of users and save them in an excel file and a json file
+
 const csvFilePath = path.join(process.cwd(), 'static/privates/users.csv')
 const jsonFilePath = path.join(process.cwd(), 'static/privates/users.json')
 const xlsxFilePath = path.join(process.cwd(), 'static/privates/users.xlsx')
