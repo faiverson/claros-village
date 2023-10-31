@@ -9,7 +9,7 @@ import { CalendarDaysIcon } from '@heroicons/react/24/outline'
 
 interface ChildComponentProps {
   className: string
-  onClick: () => void
+  onClick?: () => void
 }
 
 const Navbar: React.FC<ChildComponentProps> = ({ className, onClick }) => {
