@@ -1,11 +1,11 @@
-import Post from 'components/post'
+import Post from 'components/Post'
 import Image from 'next/image'
 
 export default function Home() {
   return (
     <section className='content'>
       <h1 className='title'>Últimas Novedades</h1>
-      <div className='main'>
+      <div className='main mt-4'>
         <Post day="04" month="Octubre" year="2023" title="Nuevo Oficial de Control">
           <>
             <p>Queremos compartir con ustedes importantes novedades relacionadas con la seguridad en nuestro barrio.</p>
@@ -28,12 +28,11 @@ export default function Home() {
         <Post day="26" month="Septiembre" year="2023" title="Reunion Informativa">
           <>
             <p>Queremos expresar nuestro sincero agradecimiento a todos los que asistieron a la reunión, es realmente gratificante ver tanto interés y nos da motivación para seguir mejorando este hermoso barrio. Su presencia es fundamental y apreciada. Nos vamos a contactar con aquellos que desean participar. Algunos otros también quieren participar y vamos a buscar alternativas para los que quieran colaborar aunque sea de manera indirecta.</p>
-
             <div className='more'>
               <div className='flex flex-wrap'>
-                <p className='w-1/2'>En la reunión, abordamos diversos temas, son muchos y no alcanzó el tiempo, lo sabemos; también quedaron cosas que queríamos contar que las vamos a ir canalizando a través de este medio (y por email en un futuro).
+                <p className='lg:w-1/2'>En la reunión, abordamos diversos temas, son muchos y no alcanzó el tiempo, lo sabemos; también quedaron cosas que queríamos contar que las vamos a ir canalizando a través de este medio (y por email en un futuro).
                   Primero se presentaron algunas de las problemáticas del barrio y se explicaron los arreglos o cambios en curso y/o en un futuro cercano:</p>
-                <div className='w-1/2'><Image src="/img/IMG_9448.jpeg" width="450" height="300" alt="Reunion" className=' border-2 rounded-sm border-primary' /></div>
+                <div className='lg:w-1/2'><Image src="/img/IMG_9448.jpeg" width="450" height="300" alt="Reunion" className=' border-2 rounded-sm border-primary' /></div>
               </div>
               <ul className='list-disc'>
                 <li>Intendencia: reparaciones de grietas en el techo, pintado</li>
@@ -45,8 +44,8 @@ export default function Home() {
               </ul>
 
               <div className='flex flex-wrap justify-between'>
-                <div className='w-1/2'><Image src="/img/IMG_9447.jpeg" width="450" height="300" alt="Reunion" className=' border-2 rounded-sm border-primary' /></div>
-                <p className='w-1/2'>Además contamos con la presencia de nuestro asesor legal que nos explicó como viene la cobranza de morosos y nos informó del estatuto vigente (que vamos a anexar también por este medio) y de que se está próximo a la aprobación de uno nuevo que modifica/actualiza el vigente acorde a las necesidades actuales del barrio. Este último será puesto a disposición/comunicado a la brevedad para su análisis, y que puedan emitir consideraciones, para finalmente llegar con un proyecto a ser votado en asamblea de accionistas.</p>
+                <div className='lg:w-1/2'><Image src="/img/IMG_9447.jpeg" width="450" height="300" alt="Reunion" className='border-2 rounded-sm border-primary' /></div>
+                <p className='lg:w-1/2'>Además contamos con la presencia de nuestro asesor legal que nos explicó como viene la cobranza de morosos y nos informó del estatuto vigente (que vamos a anexar también por este medio) y de que se está próximo a la aprobación de uno nuevo que modifica/actualiza el vigente acorde a las necesidades actuales del barrio. Este último será puesto a disposición/comunicado a la brevedad para su análisis, y que puedan emitir consideraciones, para finalmente llegar con un proyecto a ser votado en asamblea de accionistas.</p>
               </div>
               <p>Algunos temas que no alcanzamos a mencionar:</p>
               <ul className='list-list-image-[url(checkmark.png)]'>

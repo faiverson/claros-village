@@ -16,9 +16,9 @@ export const metadata: Metadata = {
 export default function Page() {
 
   return (
-    <section className='content reglamento flex flex-col'>
-      <div className='main flex flex-wrap justify-between w-full flex-grow items-center px-36 '>
-        <address className='w-3/5 text-lg text-center'>
+    <section className='content flex flex-col'>
+      <div className='main flex flex-wrap justify-between w-full flex-grow items-center lg:px-36 flex-col-reverse lg:flex-row'>
+        <address className='lg:w-3/5 text-lg text-center'>
           <Card>
             <CardHeader>
               <Heading size='md'>Aca podes encontrar información que necesites</Heading>
@@ -69,7 +69,7 @@ export default function Page() {
             </CardBody>
           </Card>
         </address>
-        <div className='w-2/5 flex flex-col items-center'>
+        <div className='lg:w-2/5 flex flex-col items-center w-20'>
           <DevicePhoneMobileIcon className="text-gray-500 w-2/3" />
         </div>
       </div>

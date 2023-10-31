@@ -8,6 +8,16 @@ const config: Config = {
   ],
   theme: {
     extend: {
+      minWidth: {
+        '1280': '1280px',
+      },
+      zIndex: {
+        '80': '80',
+        '90': '90',
+        '100': '100',
+        '200': '200',
+        '300': '300',
+      },
       fontFamily: {
         lato: ['var(--font-lato)'],
         satisfy: ['var(--font-satisfy)'],
