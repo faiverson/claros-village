@@ -17,9 +17,7 @@ export default function Page() {
               { }
             </tr>
           </thead>
-          <tbody>
-            <Users />
-          </tbody>
+          <Users />
         </table>
       </div>
     </section>
