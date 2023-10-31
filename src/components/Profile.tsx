@@ -7,7 +7,6 @@ import { ArrowRightOnRectangleIcon } from '@heroicons/react/24/outline'
 import { useSession, signOut } from 'next-auth/react'
 import { Menu, MenuButton, MenuList, MenuItem } from '@chakra-ui/react'
 
-
 const Profile = () => {
 
   const { data: session } = useSession()
@@ -24,6 +23,8 @@ const Profile = () => {
           </div>
         </MenuButton>
         <MenuList className='bg-primary'>
+          <MenuItem className=' hover:bg-alternative'><Link href="https://sr.reservas.clarosvillage.org.ar" className='nav-wrapper-link'>Panel Reservas</Link></MenuItem>
+          <MenuItem className=' hover:bg-alternative'><Link href="/vecinos" className='nav-wrapper-link'>Listado Vecinos</Link></MenuItem>
           <MenuItem className=' hover:bg-alternative'><Link href="/morosos" className='nav-wrapper-link'>Morosos</Link></MenuItem>
           <MenuItem className=' hover:bg-alternative' onClick={onLogOut}>Log Out</MenuItem>
         </MenuList>

@@ -16,18 +16,25 @@ bun dev
 
 Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+## Scripts
 
-This project uses [`next/font`](https://nextjs.org/docs/basic-features/font-optimization) to automatically optimize and load Inter, a custom Google Font.
+The script users is run using the cmd:
+```
+npm run users
+```
+And it will create users data in an excel file to share. It needs a csv file located in static/private folder to process the users
 
-## Learn More
+The script morosos is run using the cmd:
+```
+npm run morosos
+```
+It needs to have a morosos pdf file in static/private folder before to run and it will generate an excel file
 
-To learn more about Next.js, take a look at the following resources:
-
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
-
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js/) - your feedback and contributions are welcome!
+The script morosos is run using the cmd:
+```
+npm run morosos
+```
+It needs to have a morosos pdf file in static/private folder before to run and it will generate an excel file
 
 ## Deploy on Vercel
 

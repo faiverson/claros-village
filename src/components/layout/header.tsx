@@ -5,8 +5,6 @@ import Link from 'next/link'
 import Burger from 'components/Burger'
 import Navbar from 'components/Navbar'
 import Profile from 'components/Profile'
-import Shimmer from 'components/Shimmer'
-import { toBase64 } from 'utils/toBase64'
 
 export default function Header() {
   return (
@@ -18,8 +16,7 @@ export default function Header() {
               quality={100}
               priority
               width={122}
-              height={96}
-              placeholder={`data:image/svg+xml;base64,${toBase64(Shimmer(122, 96))}`} />
+              height={96} />
           </Link>
         </div>
         <Navbar className={'lg:flex flex-col lg:flex-row lg:gap-8 uppercase font-semibold text-xl hidden'} />
