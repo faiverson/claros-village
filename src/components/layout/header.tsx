@@ -5,8 +5,6 @@ import Link from 'next/link'
 import Burger from 'components/Burger'
 import Navbar from 'components/Navbar'
 import Profile from 'components/Profile'
-import Shimmer from 'components/Shimmer'
-import { toBase64 } from 'utils/toBase64'
 
 export default function Header() {
   return (

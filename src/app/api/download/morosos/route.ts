@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server'
 import fs, { Stats } from "fs"
 import * as path from 'path'
-import XLSX from 'xlsx'
+import * as XLSX from 'xlsx'
 import {transformKeys} from 'utils/parser'
 import { User } from 'app/server/actions/upload'
 import { ReadableOptions } from "stream"
