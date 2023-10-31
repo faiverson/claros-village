@@ -2,3 +2,7 @@
 address span:first-child {
   @apply flex font-medium font-lato text-lg not-italic;
 }
+
+address span + span {
+  @apply pl-3;
+}

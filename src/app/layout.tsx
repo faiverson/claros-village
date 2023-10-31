@@ -3,6 +3,10 @@ import type { Metadata } from 'next'
 import { NextFontWithVariable } from 'next/dist/compiled/@next/font'
 import { Lato, Satisfy } from 'next/font/google'
 import Header from 'components/layout/header'
+import { getServerSession } from 'next-auth'
+import { authOptions } from '../pages/api/auth/[...nextauth]'
+import { SessionProvider } from 'components/SessionProvider'
+import { Providers } from "./providers"
 
 const lato: NextFontWithVariable = Lato({
   weight: ['100', '300', "400", "700", "900"],
@@ -48,19 +52,25 @@ export const metadata: Metadata = {
   }
 }
 
-export default function RootLayout({
+export default async function RootLayout({
   children,
 }: {
   children: React.ReactNode
   }) {
+  const session = await getServerSession(authOptions)
+
   return (
     <html lang="es" className={`${lato.variable} ${satisfy.variable}`}>
       <body>
-        <main className="flex min-h-screen flex-col items-center">
-          <div className='bg-foreground absolute h-80 w-full z-0' />
-          <Header />
-          <div className='wrapper'>{children}</div>
-        </main>
+        <SessionProvider session={session}>
+          <Providers>
+          <main className="flex min-h-screen flex-col items-center">
+            <div className='bg-foreground absolute h-80 w-full z-0' />
+            <Header />
+            <div className='wrapper'>{children}</div>
+          </main>
+          </Providers>
+        </SessionProvider>
       </body>
     </html>
   )
