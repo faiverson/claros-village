@@ -3,6 +3,11 @@ import type { Metadata } from 'next'
 import { NextFontWithVariable } from 'next/dist/compiled/@next/font'
 import { Lato, Satisfy } from 'next/font/google'
 import Header from 'components/layout/header'
+import { getServerSession } from 'next-auth'
+import { authOptions } from 'app/api/auth/[...nextauth]/route'
+import { ThemeProvider } from 'providers/ThemeProvider'
+import { SessionProvider } from 'providers/SessionProvider'
+import ScrollToTopButton from 'components/ScrollToTopButton'
 
 const lato: NextFontWithVariable = Lato({
   weight: ['100', '300', "400", "700", "900"],
@@ -48,19 +53,27 @@ export const metadata: Metadata = {
   }
 }
 
-export default function RootLayout({
+export default async function RootLayout({
   children,
 }: {
   children: React.ReactNode
   }) {
+
+  const session = await getServerSession(authOptions)
+
   return (
     <html lang="es" className={`${lato.variable} ${satisfy.variable}`}>
       <body>
-        <main className="flex min-h-screen flex-col items-center">
-          <div className='bg-foreground absolute h-80 w-full z-0' />
-          <Header />
-          <div className='wrapper'>{children}</div>
-        </main>
+        <ThemeProvider>
+          <SessionProvider session={session}>
+            <main className="flex min-h-screen flex-col items-center">
+              <div className='hidden bg-foreground lg:block absolute h-16 lg:h-80 w-full z-0' />
+              <Header />
+              <div className='bg-white w-full lg:w-fit lg:mt-14 z-30 relative lg:first-letter lg:mb-8 pb-8 lg:pb-8 lg:main-box-shadow'>{children}</div>
+            </main>
+            <ScrollToTopButton />
+        </SessionProvider>
+        </ThemeProvider>
       </body>
     </html>
   )

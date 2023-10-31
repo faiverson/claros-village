@@ -1,25 +1,25 @@
 article {
-  @apply flex p-8;
+  @apply flex px-8;
 }
 
 .blog-date {
-  @apply flex flex-col w-1/5 items-end relative pr-8;
+  @apply flex flex-col w-1/5 items-end relative pr-4 lg:pr-8;
 }
 
 .blog-date:before {
-  @apply absolute block bg-gray-200 z-20 top-6 right-0 w-[1px] h-full;
+  @apply absolute block bg-gray-200 z-20 top-4 right-0 w-[1px] h-full;
   content: "";
 }
 
 .blog-date:after {
-  @apply absolute block bg-primary z-30 top-5 w-3 h-3;
+  @apply absolute block bg-primary z-30 top-4 w-3 h-3;
   content: "";
   border-radius: 50%;
   right: -5px;
 }
 
 .blog-post {
-  @apply flex flex-col w-4/5 pl-8 text-gray-700 text-lg;
+  @apply flex flex-col w-4/5 pl-8 text-gray-700 text-sm lg:text-lg mb-5;
 }
 
 .blog-content .more {
@@ -35,21 +35,9 @@ article {
   }
 
 .day {
-  @apply uppercase text-7xl font-bold text-primary font-satisfy;
-}
-
-.month {
-  @apply uppercase text-lg font-bold font-satisfy;
-}
-
-.post-title {
-  @apply uppercase text-3xl font-bold mb-4;
+  @apply uppercase text-4xl lg:text-7xl font-bold text-primary font-satisfy;
 }
 
 .blog-date {
-  @apply text-gray-500 text-base;
-}
-
-.buttons {
-  @apply mt-2;
+  @apply text-gray-500 text-sm lg:text-base;
 }

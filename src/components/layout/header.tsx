@@ -2,25 +2,32 @@
 
 import Image from 'next/image'
 import Link from 'next/link'
-import { InformationCircleIcon } from '@heroicons/react/24/outline'
-import { EnvelopeIcon } from '@heroicons/react/24/outline'
-import { MegaphoneIcon } from '@heroicons/react/24/outline'
-import { BookOpenIcon } from '@heroicons/react/24/outline'
-import { CalendarDaysIcon } from '@heroicons/react/24/outline'
-import { motion } from 'framer-motion'
+import Burger from 'components/Burger'
+import Navbar from 'components/Navbar'
+import Profile from 'components/Profile'
+import Shimmer from 'components/Shimmer'
+import { toBase64 } from 'utils/toBase64'
 
 export default function Header() {
   return (
-    <header className='container mx-auto max-w-screen-xl  flex justify-between items-center h-24 mt-2 relative text-light'>
-      <Link href="/"><Image src='/img/logo.png' alt='Claros Village' width={122} height={96} priority={true} /></Link>
-      <nav className='flex gap-8 uppercase font-semibold text-xl'>
-        <Link href="/" className='nav-wrapper-link'><MegaphoneIcon className='nav-icon' />Novedades</Link>
-        {/* <motion.div className="underline" layoutId="underline" /> */}
-        <Link href="/reglamento" className='nav-wrapper-link'><BookOpenIcon className='nav-icon' />Reglamento Interno</Link>
-        <Link href="https://reservas.clarosvillage.org.ar/tpt/home.aspx#cph_pnlUnidad" className='nav-wrapper-link'><CalendarDaysIcon className='nav-icon' />Reservas</Link>
-        {/* <Link href="/contacto" className='nav-wrapper-link'><EnvelopeIcon className='nav-icon' />Contacto</Link> */}
-        <Link href="/informacion" className='nav-wrapper-link'><InformationCircleIcon className='nav-icon' />Información</Link>
-      </nav>
+    <header className='container bg-foreground py-2 lg:mx-auto lg:max-w-screen-xl flex gap-4 lg:h-24 lg:mt-2 relative text-light'>
+      <div className='flex justify-between lg:items-center w-full '>
+        <div className='w-16 lg:w-[122px]'>
+          <Link href="/" >
+            <Image src='/img/logo.png' alt='Claros Village' sizes="100vw"
+              quality={100}
+              priority
+              width={122}
+              height={96}
+              placeholder={`data:image/svg+xml;base64,${toBase64(Shimmer(122, 96))}`} />
+          </Link>
+        </div>
+        <Navbar className={'lg:flex flex-col lg:flex-row lg:gap-8 uppercase font-semibold text-xl hidden'} />
+      </div>
+      <div className='flex flex-shrink-0 items-center mr-4'>
+        <Burger />
+        <Profile />
+      </div>
     </header>
   )
 }
