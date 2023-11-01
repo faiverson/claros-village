@@ -1,23 +1,11 @@
 import * as fs from 'fs'
 import * as path from 'path'
 import pdf from 'pdf-extraction'
-import XLSX from 'xlsx'
+import ExcelJS from 'exceljs'
 
 const pdfPath = path.join(process.cwd(), 'static/privates/morosos.pdf')
 const jsonFilePath = path.join(process.cwd(), 'static/privates/users.json')
 const xlsxFilePath = path.join(process.cwd(), 'static/privates/morosos.xlsx')
-
-const transformKeys = obj =>
-{
-  const transformedObj = {};
-  for (const key in obj) {
-    if (obj.hasOwnProperty(key)) {
-      const transformedKey = key.replace(/_/g, ' ').replace(/(?:^|\s)\S/g, match => match.toUpperCase());
-      transformedObj[transformedKey] = obj[key];
-    }
-  }
-  return transformedObj;
-}
 
 fs.readFile(jsonFilePath, 'utf8', (err, data) =>
 {
@@ -30,7 +18,7 @@ fs.readFile(jsonFilePath, 'utf8', (err, data) =>
     const users = JSON.parse(data)
 
     let dataBuffer = fs.readFileSync(pdfPath)
-    pdf(dataBuffer).then(function (data)
+    pdf(dataBuffer).then(async function (data)
     {
       const lines = data.text.split('\n').filter(line => line.trim() !== '')
       const morosos = new Map();
@@ -72,10 +60,16 @@ fs.readFile(jsonFilePath, 'utf8', (err, data) =>
         console.error('There are some morosos not founded', itemsNotInFilteredUsers);
       }
 
-      const workbook = XLSX.utils.book_new()
-      const worksheet = XLSX.utils.json_to_sheet(filteredUsers.map(({ id, unidad, expensas_adeudadas, ...rest }) => ({ id, unidad, expensas_adeudadas })).map(transformKeys))
-      XLSX.utils.book_append_sheet(workbook, worksheet, 'Sheet1')
-      XLSX.writeFile(workbook, xlsxFilePath)
+      const workbook = new ExcelJS.Workbook()
+      const worksheet = workbook.addWorksheet('Sheet1')
+      worksheet.columns = [
+        { header: 'ID', key: 'id', width: 10 },
+        { header: 'Unidad', key: 'unidad', width: 20 },
+        { header: 'Expensas Adeudadas', key: 'expensas_adeudadas', width: 10 },
+      ]
+      console.log(filteredUsers.map(({ id, unidad, expensas_adeudadas }) => ({ id, unidad, expensas_adeudadas })))
+      worksheet.addRows(filteredUsers.map(({ id, unidad, expensas_adeudadas }) => ({ id, unidad, expensas_adeudadas })))
+      await workbook.xlsx.writeFile(xlsxFilePath)
     })
   } catch (parseError) {
     console.error('Error parsing JSON:', parseError);

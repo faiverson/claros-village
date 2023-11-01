@@ -7,7 +7,6 @@ export default function Page() {
   const [users, setUsers] = useState<MorososResult | null>()
 
   const onSubmit = async (formData: FormData) => {
-    console.log(formData)
     const fileInput = formData.get('file') as File
 
     if (fileInput.size > 0) {

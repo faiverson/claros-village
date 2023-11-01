@@ -1,19 +1,23 @@
 import { NextRequest, NextResponse } from 'next/server'
 import fs, { Stats } from "fs"
 import * as path from 'path'
-import * as XLSX from 'xlsx'
-import {transformKeys} from 'utils/parser'
+import ExcelJS from 'exceljs'
 import { User } from 'app/server/actions/upload'
 import { ReadableOptions } from "stream"
 
 const xlsxFilePath = path.join(process.cwd(), 'static/privates/morosos.xlsx')
 
- const save = async (users: User[]) => {
-  const workbook = XLSX.utils.book_new()
-  const worksheet = XLSX.utils.json_to_sheet(users.map(({ id, unidad, expensas_adeudadas }) => ({ id, unidad, expensas_adeudadas })).map(transformKeys))
-  XLSX.utils.book_append_sheet(workbook, worksheet, 'Sheet1')
-  XLSX.writeFile(workbook, xlsxFilePath)
-}
+const save = async (users: User[]) => {
+  const workbook = new ExcelJS.Workbook()
+  const worksheet = workbook.addWorksheet('Sheet1')
+  worksheet.columns = [
+    { header: 'ID', key: 'id', width: 10 },
+    { header: 'Unidad', key: 'unidad', width: 20 },
+    { header: 'Expensas Adeudadas', key: 'expensas_adeudadas', width: 10 },
+  ]
+  worksheet.addRows(users.map(({ id, unidad, expensas_adeudadas }) => ({ id, unidad, expensas_adeudadas })))
+  await workbook.xlsx.writeFile(xlsxFilePath)
+};
 
 const streamFile = (path: string, options?: ReadableOptions): ReadableStream<Uint8Array> => {
     const downloadStream = fs.createReadStream(path, options);
@@ -47,3 +51,4 @@ export async function POST(request: NextRequest): Promise<NextResponse> {
   })
 
 }
+

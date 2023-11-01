@@ -1,7 +1,7 @@
 import * as fs from 'fs'
 import * as path from 'path'
 import csv from 'csv-parser'
-import XLSX from 'xlsx'
+import ExcelJS from 'exceljs'
 
 // create a list of users and save them in an excel file and a json file
 
@@ -35,17 +35,7 @@ const userSort = (a, b) =>
   return manzanaComparison
 }
 
-const transformKeys = obj =>
-{
-  const transformedObj = {};
-  for (const key in obj) {
-    if (obj.hasOwnProperty(key)) {
-      const transformedKey = key.replace(/_/g, ' ').replace(/(?:^|\s)\S/g, match => match.toUpperCase());
-      transformedObj[transformedKey] = obj[key];
-    }
-  }
-  return transformedObj;
-}
+const transformKey = key => key.replace(/_/g, ' ').replace(/(?:^|\s)\S/g, match => match.toUpperCase())
 
 fs.createReadStream(csvFilePath)
   .pipe(csv())
@@ -53,7 +43,7 @@ fs.createReadStream(csvFilePath)
   {
     results.push(data)
   })
-  .on('end', () =>
+  .on('end', async () =>
   {
     const users = results.map(item =>
     {
@@ -86,10 +76,15 @@ fs.createReadStream(csvFilePath)
       }
     })
 
-    const workbook = XLSX.utils.book_new()
-    const worksheet = XLSX.utils.json_to_sheet(users.map(({ telefono, direccion, numero_expensas, piso, departamento, barrio, ...rest }) => rest).map(transformKeys))
-    XLSX.utils.book_append_sheet(workbook, worksheet, 'Sheet1')
-    XLSX.writeFile(workbook, xlsxFilePath)
+    // this are the fields we want to have in the excel file
+    const filteredData = users.map(({ telefono, direccion, numero_expensas, piso, departamento, barrio, ...rest }) => rest)
+
+    const workbook = new ExcelJS.Workbook()
+    const worksheet = workbook.addWorksheet('Vecinos')
+    worksheet.columns = Object.keys(filteredData[0]).map(key => ({ header: transformKey(key), key }))
+    worksheet.addRows(filteredData)
+    await workbook.xlsx.writeFile(xlsxFilePath)
+    console.log(`Users added successfully`)
   })
   .on('error', (error) => console.error('Error reading and parsing the CSV file:', error))
 
