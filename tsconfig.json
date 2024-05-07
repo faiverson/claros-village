@@ -1,6 +1,5 @@
 {
   "compilerOptions": {
-    "target": "es5",
     "lib": ["dom", "dom.iterable", "esnext"],
     "allowJs": true,
     "skipLibCheck": true,
@@ -23,9 +22,11 @@
       "components/*": ["./src/components/*"],
       "utils/*": ["./src/utils/*"],
       "hooks/*": ["./src/hooks/*"],
-      "providers/*": ["./src/providers/*"]
+      "types/*": ["./src/types/*"],
+      "providers/*": ["./src/providers/*"],
+      "messages/*": ["./src/messages/*"]
     }
   },
-  "include": ["next-env.d.ts", "**/*.ts", "**/*.tsx", ".next/types/**/*.ts"],
-  "exclude": ["node_modules"]
+  "include": ["next-env.d.ts", "**/*.ts", "**/*.tsx", ".next/types/**/*.ts", "src/scripts/create-users-data.mjs"],
+  "exclude": ["node_modules"],
 }
