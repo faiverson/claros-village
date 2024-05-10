@@ -54,3 +54,31 @@ The script morosos is run using the cmd:
 npm run morosos
 ```
 It needs to have a morosos pdf file in static/private folder before to run and it will generate an excel file
+
+
+## Database
+
+```
+docker-compose up
+
+docker exec -it claros-village-postgres-1 bash
+
+psql -h localhost -U admin -d app
+
+CREATE DATABASE app;
+
+npx prisma migrate dev --name init
+```
+
+If the pass is not working:
+
+```
+ALTER USER admin PASSWORD 'password';
+```
+
+Command to run DB
+Create DB `npx prisma migrate dev`
+
+Reset: `npx prisma migrate reset --skip-seed`
+
+Seeding: `npx prisma db seed`

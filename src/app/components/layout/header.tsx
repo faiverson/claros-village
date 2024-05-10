@@ -4,7 +4,6 @@ import Image from "next/image";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { Fragment } from "react";
-// import { useSession, signOut } from 'next-auth/react'
 import { Disclosure, Menu, Transition } from "@headlessui/react";
 import {
   ArrowRightIcon,
@@ -30,7 +29,7 @@ const userNavigation = [
     icon: CalendarDaysIcon,
     public: false,
   },
-  { name: "Loguearse", href: "/login", icon: ArrowRightIcon, public: true },
+  { name: "Loguearse", href: "/auth/login", icon: ArrowRightIcon, public: true },
 ];
 
 export default function Header() {
