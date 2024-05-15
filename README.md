@@ -82,3 +82,9 @@ Create DB `npx prisma migrate dev`
 Reset: `npx prisma migrate reset --skip-seed`
 
 Seeding: `npx prisma db seed`
+
+
+
+TODO LIST
+
+1. hash the passwords on register

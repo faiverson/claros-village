@@ -1,10 +1,9 @@
-import React from 'react';
-import { Input as UIInput } from "@nextui-org/react";
+import React, {forwardRef} from 'react';
+import { InputProps, Input as UIInput } from "@nextui-org/react";
 import { useState } from "react";
 import { EyeIcon, EyeSlashIcon } from "@heroicons/react/24/outline";
 
-const PasswordInput = ({ ...props }) => {
-  const { variant, radius, color, ...restProps} = props;
+const PasswordInput = forwardRef(({variant, radius, color, ...restProps}: InputProps, inputRef: React.ForwardedRef<HTMLInputElement>) => {
   const themeColor: string = !color || color === 'primary' ? 'main-green' : color;
 
   const [isVisible, setIsVisible] = useState(false);
@@ -36,7 +35,8 @@ const PasswordInput = ({ ...props }) => {
             }
             type={isVisible ? "text" : "password"}
             {...restProps}
+            ref={inputRef}
           />;
-};
+});
 
 export default PasswordInput;

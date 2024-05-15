@@ -4,10 +4,12 @@ import {
   PhoneIcon,
 } from "@heroicons/react/24/outline";
 import { DevicePhoneMobileIcon } from "@heroicons/react/24/solid";
-import { Snippet } from "@nextui-org/react";
-import Image from "next/image";
+import { Image, Snippet } from "@nextui-org/react";
+import NextImage from "next/image";
+import {useTranslations} from 'next-intl';
 
 export default function Home() {
+  const t = useTranslations('Home');
   return (
     <section className="flex-1 p-2 md:p-0">
       <div className="flex flex-col flex-wrap gap-y-8">
@@ -32,7 +34,7 @@ export default function Home() {
               >
                 <address className="flex items-center gap-x-2 text-balance font-sans">
                   <MapPinIcon className="h-4" />
-                  Once de Septiembre 3480
+                  Once de Septiembre 3500
                 </address>
                 <address className="items-center text-balance pl-6 font-sans">
                   CP: 5014, Córdoba - Argentina
@@ -41,7 +43,7 @@ export default function Home() {
             </div>
             <div className="flex flex-col gap-y-3">
               <h3 className="flex items-center text-xl font-bold uppercase text-main-green-dark">
-                Teléfonos
+              {t('phone')}
               </h3>
               <div className="flex flex-col gap-y-2">
                 <Snippet
@@ -114,11 +116,17 @@ export default function Home() {
           </div>
           <div className="flex flex-col items-center lg:w-2/5">
             <Image
+              as={NextImage}
               src={"/static/mapa.png"}
               alt="Mapa"
-              width={500}
-              height={500}
-              priority={false}
+              width={0}
+              height={0}
+              priority
+              sizes="100vw"
+              style={{
+                width: '100%',
+                height: 'auto',
+              }}
             />
           </div>
         </div>

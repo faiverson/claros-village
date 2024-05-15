@@ -1,33 +1,50 @@
 "use client";
 
-import { Button } from "@nextui-org/react";
+import { useState } from "react";
+import { Button, Modal, ModalHeader, ModalContent, ModalBody, ModalFooter } from "@nextui-org/react";
 import Input from "app/components/base/Input";
 import PasswordInput from "app/components/base/PasswordInput";
 import type { Register } from "utils/types"; // Fix: Change the import statement to a type-only import
-import { login } from "app/actions/login";
+import type { User } from '@prisma/client'
+import signUp from "app/actions/register";
 import { SubmitHandler, useForm } from "react-hook-form";
 import Link from "next/link";
+import { useRouter } from 'next/navigation';
+import {useTranslations} from 'next-intl';
 
 export default function RegisterForm() {
+  const router = useRouter();
+
+  const t = useTranslations('RegisterForm');
 
   const {
     register,
     handleSubmit,
+    setError,
     formState: { isDirty, errors },
   } = useForm<Register>();
+  const [verified, setVerified] = useState<User>();
 
   const onSubmit: SubmitHandler<Register> = async (data, ev) => {
-    ev?.preventDefault();
-
-    console.log(data);
     if (isDirty) {
-      console.log(data);
-      const response = await login(data);
+      const response = await signUp(data);
       console.log(response);
+      if(response.error) {
+        if(response.key === 'user_exist' || response.key === 'resident_not_found') {
+          setError('email', { type: 'custom', message: t(response.key) });
+        } else {
+          // replace with toast
+          setError('name', { type: 'custom', message: t('error') });
+        }
+      } else {
+        setVerified(response.data);
+      }
     }
   };
-
-  console.log(errors);
+  const handleCloseConfirmation = () => {
+    setVerified(undefined);
+    router.push('/');
+  };
 
   return (
     <form
@@ -47,21 +64,28 @@ export default function RegisterForm() {
           <Input
             label="Nombre completo"
             placeholder="Introduce tu nombre completo"
+            isInvalid={!!errors.name}
+            errorMessage={errors.name?.message}
             {...register("name", { required: true })}
           />
           <Input
             type="email"
             label="Correo Electrónico"
             placeholder="Escribe tu correo electrónico"
+            isInvalid={!!errors.email}
+            errorMessage={errors.email?.message}
             {...register("email", { required: true })}
           />
           <PasswordInput
             label="Contraseña"
+            autoComplete="new-password"
             placeholder="Escribe tu contraseña"
             {...register("password", { required: true })}
           />
           <PasswordInput
+          id="password_confirm"
             label="Confirmar Contraseña"
+            autoComplete="new-password"
             placeholder="Escribe nuevamente tu contraseña"
             {...register("password_confirm", { required: true })}
           />
@@ -72,6 +96,29 @@ export default function RegisterForm() {
           </div>
         </div>
       </div>
+
+      {!!verified && <Modal
+        backdrop="opaque"
+        isOpen={!!verified}
+        onClose={handleCloseConfirmation}
+        classNames={{
+          backdrop: "bg-gradient-to-t from-zinc-900 to-zinc-900/10 backdrop-opacity-20"
+        }}
+      >
+        <ModalContent>
+          {(onClose) => (
+            <>
+              <ModalHeader className="flex flex-col gap-1">Falta solo un poco!</ModalHeader>
+              <ModalBody>Revise su correo {verified.email} para finalizar su registro.</ModalBody>
+              <ModalFooter>
+                <Button color="primary" onPress={onClose}>
+                  Ok
+                </Button>
+              </ModalFooter>
+            </>
+          )}
+        </ModalContent>
+      </Modal>}
     </form>
   );
 }

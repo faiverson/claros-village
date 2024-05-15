@@ -53,11 +53,15 @@ export default function Header() {
                     <Image
                       src="/img/logo.png"
                       alt="Claros Village"
-                      sizes="100vw"
                       quality={100}
                       priority
                       width={132}
                       height={96}
+                      sizes="100vw"
+                      style={{
+                        width: '100%',
+                        height: 'auto',
+                      }}
                     />
                   </Link>
                 </div>

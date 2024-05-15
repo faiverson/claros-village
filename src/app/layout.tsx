@@ -1,13 +1,11 @@
 import { Metadata, Viewport } from "next";
 import { NextFontWithVariable } from "next/dist/compiled/@next/font";
+import {NextIntlClientProvider} from 'next-intl';
+import {getMessages, getLocale} from 'next-intl/server';
 import { Lato, Satisfy } from "next/font/google";
 import Header from "./components/layout/header";
 import "./globals.css";
 import { Providers } from "./providers";
-// import { getServerSession } from 'next-auth'
-// import { authOptions } from 'app/api/auth/[...nextauth]/route'
-// import { SessionProvider } from 'providers/SessionProvider'
-// import ScrollToTopButton from 'components/ScrollToTopButton'
 
 const lato: NextFontWithVariable = Lato({
   weight: ["100", "300", "400", "700", "900"],
@@ -56,18 +54,21 @@ export const metadata: Metadata = {
   },
 };
 
-const locale = "es";
 
 export default async function RootLayout({
   children,
 }: {
   children: React.ReactNode;
 }) {
+  const locale = await getLocale();
+
+  const messages = await getMessages();
   // const session = await getServerSession(authOptions)
 
   return (
     <html lang={locale} className={`${lato.variable} ${satisfy.variable}`}>
       <body>
+        <NextIntlClientProvider messages={messages}>
         <Providers>
           {/* <SessionProvider session={session}> */}
           <main className="flex min-h-screen flex-col">
@@ -80,6 +81,7 @@ export default async function RootLayout({
           {/* <ScrollToTopButton /> */}
           {/* </SessionProvider> */}
         </Providers>
+        </NextIntlClientProvider>
       </body>
     </html>
   );
