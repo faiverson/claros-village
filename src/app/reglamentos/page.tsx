@@ -2,42 +2,42 @@ import {
   BuildingOffice2Icon,
   BuildingOfficeIcon,
   HomeModernIcon,
-} from "@heroicons/react/24/outline";
-import { Card, CardHeader, Link } from "@nextui-org/react";
+} from '@heroicons/react/24/outline'
+import { Card, CardHeader, Link } from '@nextui-org/react'
 
 const reglamentos = [
   {
-    title: "Barrio",
+    title: 'Barrio',
     icon: BuildingOffice2Icon,
-    link: "/static/reglamentos/reglamento-interno.pdf",
-    description: "Codigo de convivencia interno",
+    link: '/static/reglamentos/reglamento-interno.pdf',
+    description: 'Codigo de convivencia interno',
   },
   {
-    title: "SUM",
+    title: 'SUM',
     icon: BuildingOffice2Icon,
-    link: "/static/reglamentos/reglamento-sum.pdf",
-    description: "Reglamento interno del uso del SUM",
+    link: '/static/reglamentos/reglamento-sum.pdf',
+    description: 'Reglamento interno del uso del SUM',
   },
   {
-    title: "GYM",
+    title: 'GYM',
     icon: HomeModernIcon,
-    link: "/static/reglamentos/reglamento-gym.pdf",
-    description: "Reglamento para el uso del gimnasio",
+    link: '/static/reglamentos/reglamento-gym.pdf',
+    description: 'Reglamento para el uso del gimnasio',
   },
   {
-    title: "Obras",
+    title: 'Obras',
     icon: BuildingOfficeIcon,
-    link: "/static/reglamentos/reglamento-obras.pdf",
-    description: "Reglamento para el proyecto de una nueva vivienda",
+    link: '/static/reglamentos/reglamento-obras.pdf',
+    description: 'Reglamento para el proyecto de una nueva vivienda',
   },
-];
+]
 
 export default function Reglamentos() {
   return (
     <section className="flex flex-1 flex-col items-center p-4">
       <div className="grid max-w-4xl grid-cols-1 justify-center gap-4 md:grid-cols-2">
         {reglamentos.map((item) => {
-          const Icon = item.icon;
+          const Icon = item.icon
           return (
             <Card key={item.link}>
               <CardHeader className="flex gap-3">
@@ -54,9 +54,9 @@ export default function Reglamentos() {
                 </div>
               </CardHeader>
             </Card>
-          );
+          )
         })}
       </div>
     </section>
-  );
+  )
 }

@@ -1,4 +1,4 @@
-import {getRequestConfig} from 'next-intl/server';
+import {getRequestConfig} from "next-intl/server";
 
 export default getRequestConfig(async () => {
   // This can either be defined statically if only a single locale

@@ -1,11 +1,54 @@
 {
   "Home": {
-    "phone": "Teléfonos"
+    "info": "Aca podes encontrar toda la información que necesites",
+    "phone": "Teléfonos",
+    "direction": "Dirección",
+    "address": "Once de Septiembre 3500",
+    "zip": "CP: 5014, Córdoba - Argentina",
+    "phone1": "Puesto 1 (Entrada) +351-4029025",
+    "phone2": "Puesto 3 (Canchas) +351-4028961",
+    "mails": "Correos",
+    "directory": "Directorio: directorio@clarosvillage.org.ar",
+    "intendency": "Intendencia: intendencia@clarosvillage.org.ar",
+    "complaints": "denuncias@clarosvillage.org.ar"
+  },
+  "LoginForm": {
+    "welcome": "Bienvenido a Claros Village!",
+    "start_session": "Inicie sesión en su cuenta",
+    "account": "No tenes cuenta? ",
+    "here": "Registrate acá",
+    "btn_login": "Entrar",
+    "email": "Correo Electrónico",
+    "email_placeholder": "Escribe tu correo electrónico",
+    "password": "Contraseña",
+    "password_placeholder": "Escribe tu contraseña",
+    "user_not_found": "Usuario no encontrado",
+    "password_incorrect": "Contraseña incorrecta",
+    "user_not_active": "Usuario no activo",
+    "user_not_resident": "Usuario no es residente",
+    "invalid_credentials": "Los datos ingresados no son válidos",
+    "user_inactive": "El usuario no se encuentra activo en el sistema, revise su correo electrónico para activar su cuenta o contactarse con el administrador"
   },
   "RegisterForm": {
+    "welcome": "Bienvenido a Claros Village!",
+    "account": "Ya tenes cuenta?",
+    "here": "Logueate aca",
+    "email": "Correo Electrónico",
+    "email_placeholder": "Escribe tu correo electrónico",
+    "password": "Contraseña",
+    "password_placeholder": "Escribe tu contraseña",
+    "password_confirm": "Confirma tu contraseña",
+    "password_confirm_placeholder": "Escribe nuevamente tu contraseña",
     "error": "Error. Comuniquese con el administrador",
     "user_exist": "El usuario ya existe",
     "resident_not_found": "No se encontró el correo proporcionado, contactarse con la intendencia para solucionar el problema",
-      "user_created": "Usuario creado con éxito"
+    "user_created": "Usuario creado con éxito",
+    "btn_register": "Registrarse",
+    "roleType": "Tipo de usuario",
+    "renter": "Inquilino",
+    "landlord": "Propietario"
+  },
+  "Emails": {
+    "verify": "Bienvenido a Claros Village!"
   }
 }

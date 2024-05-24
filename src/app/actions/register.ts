@@ -1,43 +1,59 @@
 'use server'
-import { PrismaClient } from "@prisma/client";
-import type { Register } from "utils/types";
 
-export default async function signUp(formData: Register) {
-  const prisma = new PrismaClient();
+import { RegisterSchema } from '@/app/schemas'
+import db from '@/src/db'
+import sendVerificationEmail from '@/utils/email'
+import { Role } from '@prisma/client'
+import * as argon2 from 'argon2'
+import { z } from 'zod'
 
-  const { email, name, password } = formData;
+export default async function signUp(formData: z.infer<typeof RegisterSchema>) {
+  const { email, password, role } = formData
 
-  const existingUser = await prisma.user.findFirst({
+  const existingUser = await db.user.findFirst({
     where: {
       email: {
         equals: email,
       },
     },
-  });
+  })
 
-  if(existingUser) {
-    return { error: true, key: 'user_exist'};
+  if (existingUser) {
+    return { error: true, key: 'user_exist' }
   }
 
-  const existingResident = await prisma.resident.findFirst({
+  const emailField = role === Role.LANDLORD ? 'email_owners' : 'email_expenses'
+
+  const existingResident = await db.resident.findFirst({
     where: {
-      email_owners: {
+      [emailField]: {
         has: email,
       },
     },
-  });
+  })
 
-  if(existingResident) {
-    const user = await prisma.user.create({
+  const hashedPassword = await argon2.hash(password)
+
+  if (existingResident) {
+    const user = await db.user.create({
       data: {
         name: formData.name,
+        role: formData.role,
         email: formData.email,
-        password: formData.password
+        password: hashedPassword,
+        residents: {
+          create: {
+            residentId: existingResident.id,
+          },
+        },
       },
-    });
+    })
 
-    return {data: user, key: 'msg.user_created'};
+    const res = await sendVerificationEmail(user)
+    console.log(res)
+
+    return { data: user, key: 'user_created' }
   }
 
-  return { error: true, key: 'resident_not_found'};
+  return { error: true, key: 'resident_not_found' }
 }

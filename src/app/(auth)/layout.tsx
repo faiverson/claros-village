@@ -1,10 +1,9 @@
-
-import { Image } from "@nextui-org/react";
+import { Image } from '@nextui-org/react'
 
 export default async function AuthLayout({
   children,
 }: {
-  children: React.ReactNode;
+  children: React.ReactNode
 }) {
   return (
     <section className="flex flex-1 flex-col items-center p-4 md:p-0">
@@ -22,5 +21,5 @@ export default async function AuthLayout({
         </div>
       </div>
     </section>
-  );
+  )
 }
