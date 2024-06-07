@@ -13,7 +13,7 @@ const Input = forwardRef(
       <UIInput
         variant={variant || 'bordered'}
         radius={radius || 'sm'}
-        color={color || 'primary'}
+        color={color || 'success'}
         classNames={{
           inputWrapper: [
             `border-${themeColor}/40`,

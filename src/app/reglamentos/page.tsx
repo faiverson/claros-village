@@ -18,16 +18,22 @@ const reglamentos = [
     link: '/static/reglamentos/reglamento-sum.pdf',
     description: 'Reglamento interno del uso del SUM',
   },
-  {
-    title: 'GYM',
-    icon: HomeModernIcon,
-    link: '/static/reglamentos/reglamento-gym.pdf',
-    description: 'Reglamento para el uso del gimnasio',
-  },
+  // {
+  //   title: 'GYM',
+  //   icon: HomeModernIcon,
+  //   link: '/static/reglamentos/reglamento-gym.pdf',
+  //   description: 'Reglamento para el uso del gimnasio',
+  // },
   {
     title: 'Obras',
     icon: BuildingOfficeIcon,
     link: '/static/reglamentos/reglamento-obras.pdf',
+    description: 'Reglamento para el proyecto de una nueva vivienda',
+  },
+  {
+    title: 'Normativas de Construcción',
+    icon: BuildingOfficeIcon,
+    link: '/static/reglamentos/reglamento-construccion.pdf',
     description: 'Reglamento para el proyecto de una nueva vivienda',
   },
 ]
@@ -47,7 +53,12 @@ export default function Reglamentos() {
                     <span className="text-lg">{item.title}</span>
                   </div>
                   <p className="text-small text-default-500">
-                    <Link isExternal showAnchorIcon href="/reglamento-sum.pdf">
+                    <Link
+                      isExternal
+                      showAnchorIcon
+                      href={item.link}
+                      className="text-success"
+                    >
                       {item.description}
                     </Link>
                   </p>

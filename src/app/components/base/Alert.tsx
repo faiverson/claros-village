@@ -1,9 +1,8 @@
+import { AlertType } from '@/utils/types'
 import { XMarkIcon } from '@heroicons/react/24/outline'
 import { Button } from '@nextui-org/react'
 import { AnimatePresence, motion } from 'framer-motion'
 import { useEffect, useState } from 'react'
-
-type AlertType = 'error' | 'success' | 'warning' | 'info'
 
 interface AlertProps {
   title?: string

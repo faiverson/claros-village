@@ -1,5 +1,9 @@
+import { Amenity, SumRoom, SumShift } from '@/utils/types'
 import { Role } from '@prisma/client'
+import type { DateValue } from '@react-types/calendar'
 import * as z from 'zod'
+
+const DateFieldSchema: z.ZodType<DateValue> = z.any()
 
 export const LoginSchema = z.object({
   email: z.string().email({ message: 'El correo no es válido' }),
@@ -22,3 +26,23 @@ export const RegisterSchema = z
     path: ['password_confirm'],
     message: 'La contraseña no coincide',
   })
+
+export const ReservationSchema = z
+  .object({
+    amenity: z.nativeEnum(Amenity),
+    date_at: DateFieldSchema,
+    shift: z.nativeEnum(SumShift),
+    rooms: z.array(z.nativeEnum(SumRoom)),
+    observation: z.string().nullable(),
+  })
+  .refine(
+    (data) => (data.amenity === Amenity.Sum ? data.rooms.length > 0 : true),
+    {
+      message: 'Debe seleccionar un salón',
+      path: ['rooms'],
+    },
+  )
+
+export const ReservationDBSchema = ReservationSchema.innerType().extend({
+  date_at: z.string(),
+})

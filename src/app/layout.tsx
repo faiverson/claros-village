@@ -76,9 +76,11 @@ export default async function RootLayout({
           <Providers>
             <SessionProvider session={session}>
               <main className="flex min-h-screen flex-col">
-                <div className="absolute z-0 hidden h-16 w-full bg-foreground lg:block lg:h-80" />
-                <Header />
-                <div className="lg:main-box-shadow content relative flex-grow bg-white lg:mx-auto lg:mt-2 lg:h-24 lg:max-w-screen-xl">
+                <div className="bg-main-foreground absolute z-0 hidden h-16 w-full lg:block lg:h-80" />
+                <div className="container relative flex text-light lg:mx-auto lg:h-24 lg:max-w-screen-xl">
+                  <Header />
+                </div>
+                <div className="lg:main-box-shadow content relative w-auto flex-1 flex-grow bg-white lg:mx-auto lg:h-24 lg:max-w-screen-xl">
                   {children}
                 </div>
               </main>

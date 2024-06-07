@@ -1,5 +1,5 @@
 import { LoginSchema } from '@/app/schemas'
-import { getUserByEmail } from '@/app/user'
+import { getUserByEmail, getUserById } from '@/app/user'
 import { Role } from '@prisma/client'
 import type { NextAuthConfig, User } from 'next-auth'
 import { type DefaultSession } from 'next-auth'
@@ -25,27 +25,21 @@ export default {
     Credentials({
       authorize: async (credentials) => {
         try {
-          const { email, password } = await LoginSchema.parseAsync(credentials)
-          // return {email, password, id: "1",
-          // name: "Fill Murray"};
+          let user
+          if (!!credentials?.user_id) {
+            const { user_id } = credentials
+            user = (await getUserById(user_id as string)) as User
+          } else {
+            const { email, password } =
+              await LoginSchema.parseAsync(credentials)
+            user = (await getUserByEmail(email)) as User
+          }
 
-          const user = await getUserByEmail(
-            'fabian.torres@clarosvillage.org.ar',
-          )
-          // const user = await getUserByEmail(email);
-          // console.log('USER PRISMA', user);
           if (!user) {
             return null
           }
 
-          // // TODO compare passwords
-          return {
-            id: user.id,
-            name: user.name,
-            email: user.email,
-            avatar: user?.avatar,
-            role: user.role,
-          } as User
+          return user
         } catch (error) {
           if (error instanceof ZodError) {
             return null
@@ -57,6 +51,8 @@ export default {
   ],
   callbacks: {
     jwt({ token, trigger, user }) {
+      // console.log('JWT', { token, trigger, user })
+
       if (trigger === 'signIn') {
         token.role = user.role
         token.picture = user.avatar
@@ -64,13 +60,14 @@ export default {
       return token
     },
     session({ session, token }) {
+      // console.log('session', { session, token })
       session.user.role = token.role as Role
       session.user.id = token.sub as string
       session.user.avatar = token.picture as string
       return session
     },
   },
-  pages: {
-    signIn: '/login',
-  },
+  // pages: {
+  //   signIn: '/login',
+  // },
 } satisfies NextAuthConfig

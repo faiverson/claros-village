@@ -3,8 +3,9 @@
 import { LoginSchema } from '@/app/schemas'
 import { signIn } from '@/src/auth'
 import prisma from '@/src/db'
-import { DEFAULT_LOGIN_REDIRECT } from '@/src/routes'
+import * as argon2 from 'argon2'
 import { AuthError } from 'next-auth'
+import { redirect } from 'next/navigation'
 import { z } from 'zod'
 
 export default async function login(data: z.infer<typeof LoginSchema>) {
@@ -14,22 +15,34 @@ export default async function login(data: z.infer<typeof LoginSchema>) {
   }
 
   try {
-    // const user = await prisma.user.findFirst({
-    //   where: {
-    //     email: {
-    //       equals: "fabian.torres@clarosvillage.org.ar",
-    //     },
-    //   },
-    // });
-    // const user = {...data};
+    const { email, password } = data
 
-    const user = await signIn('credentials', {
-      ...data,
-      redirectTo: DEFAULT_LOGIN_REDIRECT,
+    const user = await prisma.user.findFirst({
+      where: {
+        email: {
+          equals: email,
+        },
+      },
     })
-    // const user = await signIn('credentials', {...data});
+
+    const matchPassword = await argon2.verify(
+      user?.password as string,
+      password,
+    )
+
+    if (!user || !matchPassword) {
+      return { error: true, key: 'invalid_credentials' }
+    }
+
+    if (!user.active || !user.emailVerified) {
+      return { error: true, key: 'inactive_credentials' }
+    }
+
+    await signIn('credentials', {
+      ...data,
+      redirect: false,
+    })
   } catch (error) {
-    console.log('error')
     if (error instanceof AuthError) {
       switch (error.type) {
         case 'CredentialsSignin':
@@ -38,12 +51,9 @@ export default async function login(data: z.infer<typeof LoginSchema>) {
           return { error: true, key: 'Something went wrong' }
       }
     }
+
     throw error
   }
-
-  // if(!!user) {
-  //   return user.active ? {data: user, key: 'session_started'} : { error: true, key: 'user_inactive' };
-  // }
-
+  // redirect('/reservas')
   return { success: true }
 }

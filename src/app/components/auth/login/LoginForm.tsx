@@ -9,12 +9,14 @@ import { zodResolver } from '@hookform/resolvers/zod'
 import { Button } from '@nextui-org/react'
 import { useTranslations } from 'next-intl'
 import Link from 'next/link'
+import { useRouter } from 'next/navigation'
 import { useState, useTransition } from 'react'
 import { SubmitHandler, useForm } from 'react-hook-form'
 import { z } from 'zod'
 
 export default function LoginForm() {
   const t = useTranslations('LoginForm')
+  const router = useRouter()
   const [errorMessage, setErrorMessage] = useState('')
   const [isPending, startTransition] = useTransition()
 
@@ -36,13 +38,14 @@ export default function LoginForm() {
   ) => {
     ev?.preventDefault()
     setErrorMessage('')
-    console.log('submit', data)
     startTransition(async () => {
       const response = await login(data)
-      console.log('login response', response)
-      // if(response.error) {
-      //   setErrorMessage(t(response.key));
-      // }
+      console.log('response', response)
+      if (response.error) {
+        setErrorMessage(t(response.key))
+      } else {
+        router.push('/')
+      }
     })
   }
 
@@ -54,17 +57,14 @@ export default function LoginForm() {
       onSubmit={handleSubmit(onSubmit)}
     >
       <div className="flex flex-col items-center gap-y-6">
-        <div className="flex w-1/2 flex-col justify-start space-y-1">
-          <Alert type="error" message={errorMessage} show={!!errorMessage} />
-        </div>
-        <div className="flex w-1/2 flex-col justify-start space-y-1">
-          <h2 className="text-lg font-semibold">{t('welcome')}</h2>
+        <div className="flex flex-col justify-start space-y-1 md:w-1/2">
+          <h2 className="text-2xl font-semibold">{t('welcome')}</h2>
           <h3 className="font-medium text-gray-600">{t('start_session')}</h3>
           <h3 className="font-medium text-gray-600">
             {t('account')} <Link href="/register">{t('here')}</Link>
           </h3>
         </div>
-        <div className="flex w-1/2 flex-col gap-y-3">
+        <div className="flex w-72 flex-col gap-y-3 md:w-1/2">
           <Input
             type="email"
             label={t('email')}
@@ -89,6 +89,9 @@ export default function LoginForm() {
             >
               {t('btn_login')}
             </Button>
+          </div>
+          <div className="flex w-1/2 flex-col justify-start space-y-1">
+            <Alert type="error" message={errorMessage} show={!!errorMessage} />
           </div>
         </div>
       </div>

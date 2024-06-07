@@ -1,7 +1,7 @@
 import { User } from '@prisma/client'
 
 export const RegisterTemplate = (user: User, hash: string) => {
-  const link = `${process.env.HOST}/verified/${user.id}/${hash}`
+  const link = `${process.env.HOST}/api/verified/${user.id}/${hash}`
   return (
     <div>
       <h1>Bienvenido, {user.name}!</h1>

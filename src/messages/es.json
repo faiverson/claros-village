@@ -1,16 +1,21 @@
 {
+  "Header": {
+    "morosos": "Morosos",
+    "resident": "Residentes",
+    "logout": "Cerrar Sesión"
+  },
   "Home": {
     "info": "Aca podes encontrar toda la información que necesites",
     "phone": "Teléfonos",
     "direction": "Dirección",
     "address": "Once de Septiembre 3500",
     "zip": "CP: 5014, Córdoba - Argentina",
-    "phone1": "Puesto 1 (Entrada) +351-4029025",
-    "phone2": "Puesto 3 (Canchas) +351-4028961",
+    "phone1": "Puesto 1 (Entrada)",
+    "phone2": "Puesto 3 (Canchas)",
     "mails": "Correos",
-    "directory": "Directorio: directorio@clarosvillage.org.ar",
-    "intendency": "Intendencia: intendencia@clarosvillage.org.ar",
-    "complaints": "denuncias@clarosvillage.org.ar"
+    "directory": "Directorio:",
+    "intendency": "Intendencia:",
+    "complaints": "Denuncias:"
   },
   "LoginForm": {
     "welcome": "Bienvenido a Claros Village!",
@@ -27,7 +32,7 @@
     "user_not_active": "Usuario no activo",
     "user_not_resident": "Usuario no es residente",
     "invalid_credentials": "Los datos ingresados no son válidos",
-    "user_inactive": "El usuario no se encuentra activo en el sistema, revise su correo electrónico para activar su cuenta o contactarse con el administrador"
+    "inactive_credentials": "El usuario no se encuentra activo en el sistema, revise su correo electrónico para activar su cuenta o contactarse con el administrador"
   },
   "RegisterForm": {
     "welcome": "Bienvenido a Claros Village!",
@@ -50,5 +55,33 @@
   },
   "Emails": {
     "verify": "Bienvenido a Claros Village!"
+  },
+  "Reservations": {
+    "title": "Haga su Reserva",
+    "amenity": "Seleccione lugar a reservar",
+    "soccer": "Canchas de Fútbol",
+    "sum": "SUM",
+    "gym": "Gimnasio",
+    "observation": "Observaciones",
+    "placeholderObservation": "Puede dejar una observación",
+    "shift": "Horarios",
+    "day": "Jornada Diurna",
+    "dayDesc": "Se extiende entre las 10 AM a 6 PM",
+    "night": "Jornada Nocturna",
+    "nightDesc": "Entre las 8 PM - 1.30/3 AM",
+    "both": "Jornada Completa",
+    "bothDesc": "El día completo desde las 10 AM a las 1.30/3 AM",
+    "calendar": "Seleccione una fecha",
+    "rooms": "Salones",
+    "small": "Salon Pequeño",
+    "big": "Salon Grande",
+    "btn_submit": "Reservar",
+    "invalid_session": "La sesión es inválida",
+    "invalid_reservation": "La reserva es inválida",
+    "reservation_exist": "Ya existe una reserva en esa fecha y horario",
+    "confirmationTitle": "Reserva Confirmada",
+    "roomBoth": "Ambos Salones",
+    "reservation_success_sum": "Se ha reservado {rooms} del SUM para el dia {date_at}, {shift}. \nPuede ver sus reservas en la sección mis reservas.",
+    "btn_ok": "Ok"
   }
 }

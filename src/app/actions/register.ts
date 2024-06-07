@@ -50,7 +50,6 @@ export default async function signUp(formData: z.infer<typeof RegisterSchema>) {
     })
 
     const res = await sendVerificationEmail(user)
-    console.log(res)
 
     return { data: user, key: 'user_created' }
   }

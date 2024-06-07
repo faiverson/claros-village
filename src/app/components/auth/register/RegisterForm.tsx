@@ -48,8 +48,6 @@ export default function RegisterForm() {
     },
   })
 
-  console.log(errors)
-
   const [verified, setVerified] = useState<User>()
 
   const onSubmit: SubmitHandler<z.infer<typeof RegisterSchema>> = async (
@@ -60,7 +58,6 @@ export default function RegisterForm() {
 
     startTransition(async () => {
       const response = await signUp(data)
-      console.log(response)
       if (response.error) {
         if (
           response.key === 'user_exist' ||
@@ -90,16 +87,13 @@ export default function RegisterForm() {
       onSubmit={handleSubmit(onSubmit)}
     >
       <div className="flex flex-col items-center gap-y-8">
-        <div className="flex w-1/2 flex-col justify-start space-y-1">
-          <Alert type="error" message={errorMessage} show={!!errorMessage} />
-        </div>
         <div className="flex flex-col gap-y-1">
-          <h2 className="text-lg font-semibold">{t('welcome')}</h2>
+          <h2 className="text-2xl font-semibold">{t('welcome')}</h2>
           <h3 className="font-medium text-gray-600">
             {t('account')} <Link href="/login">{t('here')}</Link>
           </h3>
         </div>
-        <div className="flex w-1/2 flex-col gap-y-3">
+        <div className="flex w-72 flex-col gap-y-3 md:w-1/2">
           <Input
             label="Nombre completo"
             placeholder="Introduce tu nombre completo"
@@ -135,12 +129,11 @@ export default function RegisterForm() {
           <Controller
             name="role"
             control={control}
-            defaultValue=""
-            rules={{ required: true }}
             render={({ field }) => (
               <RadioGroup
                 label={t('roleType')}
                 orientation="horizontal"
+                color="success"
                 {...field}
               >
                 <Radio value={Role.LANDLORD}>
@@ -162,6 +155,9 @@ export default function RegisterForm() {
             >
               {t('btn_register')}
             </Button>
+          </div>
+          <div className="flex w-1/2 flex-col justify-start space-y-1">
+            <Alert type="error" message={errorMessage} show={!!errorMessage} />
           </div>
         </div>
       </div>

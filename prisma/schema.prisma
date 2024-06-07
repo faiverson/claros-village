@@ -10,18 +10,19 @@ datasource db {
 }
 
 model User {
-  id            String    @default(cuid()) @id
-  name          String?
-  email         String?    @unique
-  password      String?
-  active        Boolean   @default(false)
-  emailVerified DateTime? @map("email_verified")
-  accounts      Account[]
-  avatar        String?
-  residents UserResident[]
-  role          Role
-  createdAt     DateTime  @default(now()) @map(name: "created_at")
-  updatedAt     DateTime  @updatedAt @map(name: "updated_at")
+  id                  String    @default(cuid()) @id
+  name                String?
+  email               String?    @unique
+  password            String?
+  active              Boolean   @default(false)
+  emailVerified       DateTime? @map("email_verified")
+  accounts            Account[]
+  avatar              String?
+  residents           UserResident[]
+  sum_reservations    SumReservation[]
+  role                Role
+  createdAt           DateTime  @default(now()) @map(name: "created_at")
+  updatedAt           DateTime  @updatedAt @map(name: "updated_at")
   @@map(name: "users")
 }
 
@@ -93,4 +94,18 @@ model VerificationToken {
   expires    DateTime
 
   @@id([identifier, token])
+}
+model SumReservation {
+  id          String    @default(cuid()) @id
+  shift       String
+  roomSmall   Boolean  @map(name: "room_small")
+  roomBig     Boolean  @map(name: "room_big")
+  dateAt      DateTime @map(name: "date_at")
+  userId      String   @map(name: "user_id")
+  reservedAt  DateTime  @default(now()) @map(name: "reserved_at")
+  observation String?
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@map(name: "sum_reservations")
 }
