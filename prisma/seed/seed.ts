@@ -68,6 +68,8 @@ async function main() {
     console.log(res)
   }
 
+  const currentDate = new Date()
+
   for (const user of users) {
     const hashedPassword = await argon2.hash('Pa$$w0rd!!')
     await prisma.user.create({
@@ -75,6 +77,7 @@ async function main() {
         ...user,
         password: hashedPassword,
         active: true,
+        emailVerified: currentDate.toISOString(),
       },
     })
   }

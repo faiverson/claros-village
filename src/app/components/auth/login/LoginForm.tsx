@@ -1,6 +1,6 @@
 'use client'
 
-import login from '@/app/actions/login'
+import serverLogin from '@/app/actions/login'
 import Alert from '@/app/components/base/Alert'
 import Input from '@/app/components/base/Input'
 import PasswordInput from '@/app/components/base/PasswordInput'
@@ -39,12 +39,13 @@ export default function LoginForm() {
     ev?.preventDefault()
     setErrorMessage('')
     startTransition(async () => {
-      const response = await login(data)
+      const response = await serverLogin(data)
       console.log('response', response)
       if (response.error) {
         setErrorMessage(t(response.key))
       } else {
-        router.push('/')
+        window.location.href = '/'
+        // router.refresh()
       }
     })
   }

@@ -2,6 +2,7 @@
   "Header": {
     "morosos": "Morosos",
     "resident": "Residentes",
+    "myReservations": "Mis Reservas",
     "logout": "Cerrar Sesión"
   },
   "Home": {
@@ -82,6 +83,11 @@
     "confirmationTitle": "Reserva Confirmada",
     "roomBoth": "Ambos Salones",
     "reservation_success_sum": "Se ha reservado {rooms} del SUM para el dia {date_at}, {shift}. \nPuede ver sus reservas en la sección mis reservas.",
-    "btn_ok": "Ok"
+    "btn_ok": "Ok",
+    "yes": "Si",
+    "no": "No",
+    "edit": "Editar",
+    "destroy": "Eliminar",
+    "no_reservations": "No hay reservas disponibles"
   }
 }

@@ -1,7 +1,7 @@
 export const publicRoutes = ['/']
 
-export const authRoutes = ['/auth/login', '/auth/register']
+export const authRoutes = ['/login', '/register']
 
-export const apiAuthPrefix = '/api/auth'
+export const apiPrefix = '/api'
 
-export const DEFAULT_LOGIN_REDIRECT = '/reservas'
+export const DEFAULT_LOGIN_REDIRECT = '/'

@@ -92,3 +92,4 @@ body {
 .btn-sign-in {
   @apply inline-flex items-center justify-center rounded-lg bg-main-green px-4 py-2.5 text-center text-sm font-medium text-white hover:bg-main-green/90 focus:outline-none focus:ring-4 focus:ring-main-green/50 dark:focus:ring-green-600;
 }
+

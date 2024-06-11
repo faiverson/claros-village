@@ -38,23 +38,28 @@ Check out our [Next.js deployment documentation](https://nextjs.org/docs/deploym
 ## Scripts
 
 The script users is run using the cmd:
+
 ```
 npm run users
 ```
+
 And it will create users data in an excel file to share. It needs a csv file located in static/private folder to process the users
 
 The script morosos is run using the cmd:
+
 ```
 npm run morosos
 ```
+
 It needs to have a morosos pdf file in static/private folder before to run and it will generate an excel file
 
 The script morosos is run using the cmd:
+
 ```
 npm run morosos
 ```
-It needs to have a morosos pdf file in static/private folder before to run and it will generate an excel file
 
+It needs to have a morosos pdf file in static/private folder before to run and it will generate an excel file
 
 ## Database
 
@@ -83,8 +88,19 @@ Reset: `npx prisma migrate reset --skip-seed`
 
 Seeding: `npx prisma db seed`
 
+Database
 
+`npx prisma studio`
+http://localhost:5555/
 
 TODO LIST
 
-1. hash the passwords on register
+1. gym and soccer reservations
+
+2. reservation by admins
+
+3. my reservations, delete reservations
+
+4. Add error page for token expired in page (/verified) after registration
+
+ 

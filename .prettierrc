@@ -5,5 +5,11 @@
   ],
   "organizeImportsSkipDestructiveCodeActions": true,
   "singleQuote": true,
-  "semi": false
+  "semi": false,
+  "bracketSpacing": true,
+  "printWidth": 150,
+  "trailingComma": "all",
+  "tabWidth": 4,
+  "useTabs": false,
+  "endOfLine": "auto"
 }

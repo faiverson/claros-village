@@ -8,16 +8,21 @@ export default async function sendVerificationEmail(user: any) {
 
   const t = await getTranslations('Emails')
   try {
-    const hash = await createUserToken(user.id)
+    const userAccountToken = await createUserToken(user.id)
+
+    if (!userAccountToken.access_token) {
+      throw new Error('Access token is required');
+    }
 
     return await resend.emails.send({
       from: 'no-reply <no-reply@resend.dev>',
       // from: 'no-reply <no-reply@mbox.clarosvillage.org.ar>',
       to: ['fabian.torres@clarosvillage.org.ar'],
       subject: t('verify'),
-      react: RegisterTemplate(user, hash.token),
+      react: RegisterTemplate(user, userAccountToken.access_token),
     })
   } catch (error) {
+    console.error(error)
     throw new Error('Error sending email')
   }
 }

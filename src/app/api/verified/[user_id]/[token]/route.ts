@@ -1,5 +1,5 @@
-import { getUserById } from '@/app/user'
 import { signIn } from '@/src/auth'
+import { NextResponse } from 'next/server'
 import prisma from '@/src/db'
 import { DEFAULT_LOGIN_REDIRECT } from '@/src/routes'
 import { AuthError } from 'next-auth'
@@ -10,30 +10,48 @@ export async function GET(
 ) {
   const { user_id, token } = params
 
-  const verificationToken = await prisma.verificationToken.findFirst({
+  const account = await prisma.account.findFirst({
     where: {
-      identifier: {
+      userId: {
         equals: user_id,
       },
-      token: {
+      access_token: {
         equals: token,
+      },
+      provider: {
+        equals: 'credentials',
+      },
+      type: {
+        equals: 'register',
       },
     },
   })
 
-  if (!verificationToken) {
-    throw new Error('token_not_found')
+  if (!account) {
+    return { error: true, key: 'token_not_found' }
   }
 
-  const tokenExpiryDate = new Date(verificationToken.expires)
-  const currentDate = new Date()
+  if (account.expires_at === null) {
+    return { error: true, key: 'token_expiry_date_not_found' }
+  }
+  if (account.expires_at === null) {
+    return { error: true, key: 'token_expiry_date_not_found' }
+  }
+  const currentDate = Date.now()
+  const expiredAt = Number(account.expires_at.toString())
 
-  if (currentDate >= tokenExpiryDate) {
+  if (currentDate <= expiredAt) {
     try {
-      await prisma.verificationToken.deleteMany({
+      await prisma.account.deleteMany({
         where: {
-          identifier: {
-            equals: verificationToken.identifier,
+          userId: {
+            equals: account.userId,
+          },
+          provider: {
+            equals: 'credentials',
+          },
+          type: {
+            equals: 'register',
           },
         },
       })
@@ -44,10 +62,11 @@ export async function GET(
         },
         data: {
           active: true,
-          emailVerified: currentDate.toISOString(),
+          emailVerified: (new Date(currentDate)).toISOString(),
         },
       })
 
+      console.log('credentials')
       await signIn('credentials', {
         ...{ user_id },
         redirectTo: DEFAULT_LOGIN_REDIRECT,
@@ -65,5 +84,5 @@ export async function GET(
     }
   }
 
-  throw new Error('token_expired')
+  return NextResponse.json( { error: true, key: 'token_expired' })
 }

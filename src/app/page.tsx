@@ -12,7 +12,6 @@ export default function Home() {
   const t = useTranslations('Home')
 
   return (
-    // <section className="flex flex-1 flex-col items-center p-4">
     <section className="flex flex-1 flex-col p-2 md:p-0">
       <div className="flex flex-col flex-wrap gap-y-8 ">
         <header className="flex gap-x-6 md:mb-8 md:mt-12 md:items-center md:justify-center">

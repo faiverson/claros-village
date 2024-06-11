@@ -1,6 +1,5 @@
 import prisma from '@/src/db'
 import { generateEmailHash } from '@/utils/tokens'
-import crypto from 'crypto'
 
 export const getUserById = async (id: string) => {
   return await prisma.user.findUnique({
@@ -21,12 +20,17 @@ export const getUserByEmail = async (email: string) => {
 }
 
 export const createUserToken = async (user_id: string) => {
-  const expires = new Date(Date.now() + 1000 * 60 * 60 * 24)
-  return await prisma.verificationToken.create({
+  const expires_at = new Date(Date.now() + 1000 * 60 * 60 * 24)
+  const access_token = await generateEmailHash(`${user_id}-${expires_at.toISOString()}`)
+
+  return await prisma.account.create({
     data: {
-      identifier: user_id,
-      token: generateEmailHash(`${user_id}-${expires.toISOString()}`),
-      expires,
+      userId: user_id,
+      provider: 'credentials',
+      providerAccountId: user_id,
+      type: 'register',
+      access_token,
+      expires_at: BigInt(expires_at.getTime()),
     },
   })
 }

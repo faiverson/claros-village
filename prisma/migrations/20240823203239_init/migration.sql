@@ -1,5 +1,5 @@
 -- CreateEnum
-CREATE TYPE "roles" AS ENUM ('USER', 'ADMIN', 'MANAGER', 'GUARD');
+CREATE TYPE "roles" AS ENUM ('landlord', 'renter', 'admin', 'manager', 'guard');
 
 -- CreateTable
 CREATE TABLE "users" (
@@ -10,7 +10,7 @@ CREATE TABLE "users" (
     "active" BOOLEAN NOT NULL DEFAULT false,
     "email_verified" TIMESTAMP(3),
     "avatar" TEXT,
-    "role" "roles" NOT NULL DEFAULT 'USER',
+    "role" "roles" NOT NULL,
     "created_at" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
     "updated_at" TIMESTAMP(3) NOT NULL,
 
@@ -42,7 +42,15 @@ CREATE TABLE "residents" (
 );
 
 -- CreateTable
-CREATE TABLE "Account" (
+CREATE TABLE "UserResident" (
+    "userId" TEXT NOT NULL,
+    "residentId" TEXT NOT NULL,
+
+    CONSTRAINT "UserResident_pkey" PRIMARY KEY ("userId","residentId")
+);
+
+-- CreateTable
+CREATE TABLE "accounts" (
     "userId" TEXT NOT NULL,
     "type" TEXT NOT NULL,
     "provider" TEXT NOT NULL,
@@ -57,25 +65,21 @@ CREATE TABLE "Account" (
     "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
     "updatedAt" TIMESTAMP(3) NOT NULL,
 
-    CONSTRAINT "Account_pkey" PRIMARY KEY ("provider","providerAccountId")
+    CONSTRAINT "accounts_pkey" PRIMARY KEY ("provider","providerAccountId")
 );
 
 -- CreateTable
-CREATE TABLE "Session" (
-    "sessionToken" TEXT NOT NULL,
-    "userId" TEXT NOT NULL,
-    "expires" TIMESTAMP(3) NOT NULL,
-    "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
-    "updatedAt" TIMESTAMP(3) NOT NULL
-);
+CREATE TABLE "sum_reservations" (
+    "id" TEXT NOT NULL,
+    "shift" TEXT NOT NULL,
+    "room_small" BOOLEAN NOT NULL,
+    "room_big" BOOLEAN NOT NULL,
+    "date_at" TIMESTAMP(3) NOT NULL,
+    "user_id" TEXT NOT NULL,
+    "reserved_at" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    "observation" TEXT,
 
--- CreateTable
-CREATE TABLE "VerificationToken" (
-    "identifier" TEXT NOT NULL,
-    "token" TEXT NOT NULL,
-    "expires" TIMESTAMP(3) NOT NULL,
-
-    CONSTRAINT "VerificationToken_pkey" PRIMARY KEY ("identifier","token")
+    CONSTRAINT "sum_reservations_pkey" PRIMARY KEY ("id")
 );
 
 -- CreateIndex
@@ -84,11 +88,14 @@ CREATE UNIQUE INDEX "users_email_key" ON "users"("email");
 -- CreateIndex
 CREATE UNIQUE INDEX "residents_email_key" ON "residents"("email");
 
--- CreateIndex
-CREATE UNIQUE INDEX "Session_sessionToken_key" ON "Session"("sessionToken");
+-- AddForeignKey
+ALTER TABLE "UserResident" ADD CONSTRAINT "UserResident_userId_fkey" FOREIGN KEY ("userId") REFERENCES "users"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
 
 -- AddForeignKey
-ALTER TABLE "Account" ADD CONSTRAINT "Account_userId_fkey" FOREIGN KEY ("userId") REFERENCES "users"("id") ON DELETE CASCADE ON UPDATE CASCADE;
+ALTER TABLE "UserResident" ADD CONSTRAINT "UserResident_residentId_fkey" FOREIGN KEY ("residentId") REFERENCES "residents"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
 
 -- AddForeignKey
-ALTER TABLE "Session" ADD CONSTRAINT "Session_userId_fkey" FOREIGN KEY ("userId") REFERENCES "users"("id") ON DELETE CASCADE ON UPDATE CASCADE;
+ALTER TABLE "accounts" ADD CONSTRAINT "accounts_userId_fkey" FOREIGN KEY ("userId") REFERENCES "users"("id") ON DELETE CASCADE ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE "sum_reservations" ADD CONSTRAINT "sum_reservations_user_id_fkey" FOREIGN KEY ("user_id") REFERENCES "users"("id") ON DELETE CASCADE ON UPDATE CASCADE;

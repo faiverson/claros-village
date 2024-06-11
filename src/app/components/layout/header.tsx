@@ -5,6 +5,7 @@ import {
   BookOpenIcon,
   CalendarDaysIcon,
   InformationCircleIcon,
+  DocumentPlusIcon,
 } from '@heroicons/react/24/outline'
 import {
   Link,
@@ -16,15 +17,14 @@ import {
   NavbarMenuItem,
   NavbarMenuToggle,
 } from '@nextui-org/react'
-import { signOut, useSession } from 'next-auth/react'
 import { useTranslations } from 'next-intl'
 import Image from 'next/image'
 import { usePathname } from 'next/navigation'
 import { useMemo } from 'react'
 import UserProfile from '../base/UserProfile'
+import { Session } from 'next-auth'
 
-export default function Header() {
-  const { data: session } = useSession()
+export default function Header({session}: {session: Session}) {
   const t = useTranslations('Header')
 
   const userNavigation = useMemo(
@@ -53,13 +53,17 @@ export default function Header() {
         icon: ArrowRightIcon,
         show: !session,
       },
+      {
+        name: 'Registrarse',
+        href: '/register',
+        icon: DocumentPlusIcon,
+        show: !session,
+      },
     ],
     [session],
   )
 
   const pathname = usePathname()
-
-  const onLogOut = () => signOut()
 
   return (
     <Navbar className="bg-main-foreground">

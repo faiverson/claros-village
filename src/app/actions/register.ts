@@ -10,7 +10,7 @@ import { z } from 'zod'
 export default async function signUp(formData: z.infer<typeof RegisterSchema>) {
   const { email, password, role } = formData
 
-  const existingUser = await db.user.findFirst({
+  let user = await db.user.findFirst({
     where: {
       email: {
         equals: email,
@@ -18,7 +18,7 @@ export default async function signUp(formData: z.infer<typeof RegisterSchema>) {
     },
   })
 
-  if (existingUser) {
+  if (user && user.emailVerified) {
     return { error: true, key: 'user_exist' }
   }
 
@@ -34,8 +34,8 @@ export default async function signUp(formData: z.infer<typeof RegisterSchema>) {
 
   const hashedPassword = await argon2.hash(password)
 
-  if (existingResident) {
-    const user = await db.user.create({
+  if (!user && existingResident) {
+     user = await db.user.create({
       data: {
         name: formData.name,
         role: formData.role,
@@ -48,11 +48,11 @@ export default async function signUp(formData: z.infer<typeof RegisterSchema>) {
         },
       },
     })
-
-    const res = await sendVerificationEmail(user)
-
-    return { data: user, key: 'user_created' }
+  } else if(!existingResident) {
+    return { error: true, key: 'resident_not_found' }
   }
 
-  return { error: true, key: 'resident_not_found' }
+  await sendVerificationEmail(user)
+
+  return { data: user, key: 'user_created' }
 }

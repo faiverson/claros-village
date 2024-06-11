@@ -1,9 +1,8 @@
-import { Providers } from '@/app/providers'
 import Header from '@/components/layout/header'
 import { auth } from '@/src/auth'
 import { Metadata, Viewport } from 'next'
-import { SessionProvider } from 'next-auth/react'
 import { NextIntlClientProvider } from 'next-intl'
+import { Providers } from '@/app/providers'
 import { getLocale, getMessages } from 'next-intl/server'
 import { NextFontWithVariable } from 'next/dist/compiled/@next/font'
 import { Lato, Satisfy } from 'next/font/google'
@@ -56,8 +55,6 @@ export const metadata: Metadata = {
   },
 }
 
-export const runtime = 'nodejs'
-
 export default async function RootLayout({
   children,
 }: {
@@ -74,18 +71,15 @@ export default async function RootLayout({
       <body>
         <NextIntlClientProvider messages={messages}>
           <Providers>
-            <SessionProvider session={session}>
               <main className="flex min-h-screen flex-col">
                 <div className="bg-main-foreground absolute z-0 hidden h-16 w-full lg:block lg:h-80" />
                 <div className="container relative flex text-light lg:mx-auto lg:h-24 lg:max-w-screen-xl">
-                  <Header />
+                  <Header session={session} />
                 </div>
                 <div className="lg:main-box-shadow content relative w-auto flex-1 flex-grow bg-white lg:mx-auto lg:h-24 lg:max-w-screen-xl">
                   {children}
                 </div>
               </main>
-              {/* <ScrollToTopButton /> */}
-            </SessionProvider>
           </Providers>
         </NextIntlClientProvider>
       </body>

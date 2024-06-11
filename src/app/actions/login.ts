@@ -5,11 +5,12 @@ import { signIn } from '@/src/auth'
 import prisma from '@/src/db'
 import * as argon2 from 'argon2'
 import { AuthError } from 'next-auth'
-import { redirect } from 'next/navigation'
 import { z } from 'zod'
+import { auth } from '@/src/auth'
 
-export default async function login(data: z.infer<typeof LoginSchema>) {
+export default async function serverLogin(data: z.infer<typeof LoginSchema>) {
   const validatedFields = LoginSchema.safeParse(data)
+  // console.log('validatedFields', validatedFields)
   if (!validatedFields.success) {
     return { error: true, key: 'invalid_credentials' }
   }
@@ -25,12 +26,18 @@ export default async function login(data: z.infer<typeof LoginSchema>) {
       },
     })
 
+    if (!user) {
+      return { error: true, key: 'invalid_credentials' }
+    }
+
+    // console.log('user', user)
     const matchPassword = await argon2.verify(
       user?.password as string,
       password,
     )
 
-    if (!user || !matchPassword) {
+    // console.log('matchPassword', matchPassword)
+    if (!matchPassword) {
       return { error: true, key: 'invalid_credentials' }
     }
 
@@ -39,10 +46,12 @@ export default async function login(data: z.infer<typeof LoginSchema>) {
     }
 
     await signIn('credentials', {
-      ...data,
+      ...user,
+      // redirectTo: '/',
       redirect: false,
     })
   } catch (error) {
+    // console.log('ERROR\n\n\n\n', error)
     if (error instanceof AuthError) {
       switch (error.type) {
         case 'CredentialsSignin':
@@ -54,6 +63,6 @@ export default async function login(data: z.infer<typeof LoginSchema>) {
 
     throw error
   }
-  // redirect('/reservas')
+
   return { success: true }
 }
