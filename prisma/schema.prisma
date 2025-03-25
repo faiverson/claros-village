@@ -1,105 +1,130 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
+// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
+
 generator client {
   provider = "prisma-client-js"
-  previewFeatures = ["driverAdapters", "relationJoins"]
 }
 
 datasource db {
   provider = "postgresql"
-  url = env("POSTGRES_PRISMA_URL") // uses connection pooling
-  directUrl = env("POSTGRES_URL_NON_POOLING") // uses a direct connection
+  url      = env("DATABASE_URL")
 }
 
 model User {
-  id                  String    @default(cuid()) @id
+  id                  String           @id @default(cuid())
   name                String?
-  email               String?    @unique
+  email               String           @unique
+  emailVerified       DateTime?        @map("email_verified")
   password            String?
-  active              Boolean   @default(false)
-  emailVerified       DateTime? @map("email_verified")
-  accounts            Account[]
+  active              Boolean          @default(false)
   avatar              String?
+  role                Role             @default(RENTER)
+  verificationToken   String?          @map("verification_token")
+  verificationExpires DateTime?        @map("verification_expires")
+  createdAt           DateTime         @default(now()) @map(name: "created_at")
+  updatedAt           DateTime         @updatedAt @map(name: "updated_at")
+  accounts            Account[]
+  sessions            Session[]
   residents           UserResident[]
   sum_reservations    SumReservation[]
-  role                Role
-  createdAt           DateTime  @default(now()) @map(name: "created_at")
-  updatedAt           DateTime  @updatedAt @map(name: "updated_at")
+
   @@map(name: "users")
 }
 
 model Resident {
-  id                  String    @default(cuid()) @id
-  name                String
-  email               String    @unique
-  email_owners        String[]
-  email_expenses      String[]
-  manzana             String
-  lote                String
-  unidad              String
-  phone               String
-  phones              String[]
-  is_owner            Boolean
-  is_duplex           Boolean
-  numero_expensas     String?
-  direccion           String?
-  floor               String?
-  departament         String?
-  neighborhood        String?
-  users  UserResident[]
-  createdAt           DateTime  @default(now()) @map(name: "created_at")
+  id              String         @id @default(cuid())
+  name            String
+  email           String         @unique
+  email_owners    String[]
+  email_expenses  String[]
+  manzana         String
+  lote            String
+  unidad          String
+  phone           String
+  phones          String[]
+  is_owner        Boolean
+  is_duplex       Boolean
+  numero_expensas String?
+  direccion       String?
+  floor           String?
+  departament     String?
+  neighborhood    String?
+  users           UserResident[]
+  createdAt       DateTime       @default(now()) @map(name: "created_at")
+
   @@map(name: "residents")
 }
 
 model UserResident {
-  userId    String
-  user      User    @relation(fields: [userId], references: [id])
+  userId     String
+  user       User     @relation(fields: [userId], references: [id])
   residentId String
-  resident  Resident @relation(fields: [residentId], references: [id])
+  resident   Resident @relation(fields: [residentId], references: [id])
 
   @@id([userId, residentId])
+  @@map(name: "users_residents")
 }
 
 enum Role {
   LANDLORD @map("landlord")
-  RENTER  @map("renter")
-  ADMIN @map("admin")
-  MANAGER @map("manager")
-  GUARD @map("guard")
+  RENTER   @map("renter")
+  ADMIN    @map("admin")
+  MANAGER  @map("manager")
+  GUARD    @map("guard")
+
   @@map("roles")
 }
 
+model SumReservation {
+  id          String   @id @default(cuid())
+  shift       String
+  roomSmall   Boolean  @map(name: "room_small")
+  roomBig     Boolean  @map(name: "room_big")
+  dateAt      DateTime @map(name: "date_at")
+  userId      String   @map(name: "user_id")
+  reservedAt  DateTime @default(now()) @map(name: "reserved_at")
+  observation String?
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@map(name: "sum_reservations")
+}
+
 model Account {
+  id                String  @id @default(cuid())
   userId            String
   type              String
   provider          String
   providerAccountId String
   refresh_token     String? @db.Text
   access_token      String? @db.Text
-  expires_at        BigInt?
+  expires_at        Int?
   token_type        String?
   scope             String?
   id_token          String? @db.Text
   session_state     String?
 
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-
   user User @relation(fields: [userId], references: [id], onDelete: Cascade)
 
-  @@id([provider, providerAccountId])
+  @@unique([provider, providerAccountId])
   @@map(name: "accounts")
 }
 
-model SumReservation {
-  id          String    @default(cuid()) @id
-  shift       String
-  roomSmall   Boolean  @map(name: "room_small")
-  roomBig     Boolean  @map(name: "room_big")
-  dateAt      DateTime @map(name: "date_at")
-  userId      String   @map(name: "user_id")
-  reservedAt  DateTime  @default(now()) @map(name: "reserved_at")
-  observation String?
+model Session {
+  id           String   @id @default(cuid())
+  sessionToken String   @unique
+  userId       String
+  expires      DateTime
+  user         User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
 
-  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+model VerificationToken {
+  identifier String
+  token      String   @unique
+  expires    DateTime
 
-  @@map(name: "sum_reservations")
+  @@unique([identifier, token])
 }

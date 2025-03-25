@@ -1,38 +1,26 @@
-import { DEFAULT_LOGIN_REDIRECT, apiPrefix, authRoutes, publicRoutes } from '@/src/routes'
-import NextAuth from 'next-auth'
-import { NextResponse } from 'next/server'
-import authConfig from './auth.config'
+import { NextResponse } from "next/server";
+import { getToken } from "next-auth/jwt";
+import { NextRequest } from "next/server";
 
-export default NextAuth(authConfig).auth
+export async function middleware(request: NextRequest) {
+  const token = await getToken({ req: request });
+  const isAuthenticated = !!token;
 
-// export const { auth } = NextAuth(authConfig)
+  // Define protected routes
+  const isProtectedRoute = request.nextUrl.pathname.startsWith("/dashboard");
+  const isAuthRoute = request.nextUrl.pathname.startsWith("/auth");
 
-// export default auth((req) => {
-//   const { auth, nextUrl } = req
-//   console.log(
-//     `-------------- ROUTE ${nextUrl.pathname} ---------------`
-//   )
-//   const isAuth = !!auth
-//   console.log('isAuth', auth)
-//   // const isApiRoute = nextUrl.pathname.startsWith(apiPrefix)
-//   // const isPublicRoute = publicRoutes.includes(nextUrl.pathname)
-//   const isAuthRoute = authRoutes.includes(nextUrl.pathname)
+  if (isProtectedRoute && !isAuthenticated) {
+    return NextResponse.redirect(new URL("/auth/signin", request.url));
+  }
 
-//   // if (isApiRoute && isPublicRoute) {
-//   //   return NextResponse.next()
-//   // }
+  if (isAuthRoute && isAuthenticated) {
+    return NextResponse.redirect(new URL("/dashboard", request.url));
+  }
 
-//   // if (isAuth && isAuthRoute) {
-//   //   return NextResponse.redirect(new URL(DEFAULT_LOGIN_REDIRECT + '?r=1', nextUrl))
-//   // }
-
-//   // if (!isAuth && !isPublicRoute) {
-//   //   return NextResponse.redirect(new URL('/login', nextUrl))
-//   // }
-
-//   return NextResponse.next()
-// })
+  return NextResponse.next();
+}
 
 export const config = {
-    matcher: ['/((?!.+\\.[\\w]+$|_next).*)', '/', '/(api|trpc)(.*)'],
-}
+  matcher: ["/dashboard/:path*", "/auth/:path*"],
+};

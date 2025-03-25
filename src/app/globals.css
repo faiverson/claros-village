@@ -1,95 +1,77 @@
-@tailwind base;
-@tailwind components;
-@tailwind utilities;
+@import "tailwindcss";
 
-:root {
-  --foreground-start: 12 182 114;
-  --light: 239 239 239;
-  --dark: 32 32 32;
-  --foreground-end: 255 255 255;
+@theme {
+  --color-primary-50: #f0fdf4;
+  --color-primary-100: #dcfce7;
+  --color-primary-200: #bbf7d0;
+  --color-primary-300: #86efac;
+  --color-primary-400: #4ade80;
+  --color-primary-500: #16a34a;
+  --color-primary-600: #15803d;
+  --color-primary-700: #166534;
+  --color-primary-800: #14532d;
+  --color-primary-900: #052e16;
+  --color-destructive-50: #fef2f2;
+  --color-destructive-100: #fee2e2;
+  --color-destructive-200: #fecaca;
+  --color-destructive-300: #fca5a5;
+  --color-destructive-400: #f87171;
+  --color-destructive-500: #ef4444;
+  --color-destructive-600: #dc2626;
+  --color-destructive-700: #b91c1c;
+  --color-destructive-800: #991b1b;
+  --color-destructive-900: #7f1d1d;
+  --color-accent-50: #fefce8;
+  --color-accent-100: #fef9c3;
+  --color-accent-200: #fef08a;
+  --color-accent-300: #fde047;
+  --color-accent-400: #facc15;
+  --color-accent-500: #eab308;
+  --color-accent-600: #ca8a04;
+  --color-accent-700: #a16207;
+  --color-accent-800: #854d0e;
+  --color-accent-900: #713f12;
+  --background: #ffffff;
+  --foreground: #000000;
+  --card: #ffffff;
+  --card-foreground: #000000;
+  --popover: #ffffff;
+  --popover-foreground: #000000;
+  --muted: #f3f4f6;
+  --muted-foreground: #6b7280;
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --foreground-start: 12 182 114;
-    --foreground-end: 0 0 0;
-  }
+@theme @media (prefers-color-scheme: dark) {
+  --color-primary-50: #052e16;
+  --color-primary-100: #14532d;
+  --color-primary-200: #166534;
+  --color-primary-300: #15803d;
+  --color-primary-400: #16a34a;
+  --color-primary-500: #22c55e;
+  --color-primary-600: #4ade80;
+  --color-primary-700: #86efac;
+  --color-primary-800: #bbf7d0;
+  --color-primary-900: #dcfce7;
+  --color-destructive-50: #7f1d1d;
+  --color-destructive-100: #991b1b;
+  --color-destructive-200: #b91c1c;
+  --color-destructive-300: #dc2626;
+  --color-destructive-400: #ef4444;
+  --color-destructive-500: #f87171;
+  --color-destructive-600: #fca5a5;
+  --color-destructive-700: #fecaca;
+  --color-destructive-800: #fee2e2;
+  --color-destructive-900: #fef2f2;
+  --color-accent-50: #713f12;
+  --color-accent-100: #854d0e;
+  --color-accent-200: #a16207;
+  --color-accent-300: #ca8a04;
+  --color-accent-400: #eab308;
+  --color-accent-500: #facc15;
+  --color-accent-600: #fde047;
+  --color-accent-700: #fef08a;
+  --color-accent-800: #fef9c3;
+  --color-accent-900: #fefce8;
+  --background: #171717;
+  --foreground: #ffffff;
 }
-
-body {
-  @apply font-lato text-black;
-  background: rgb(var(--light));
-}
-
-@layer utilities {
-  .text-balance {
-    text-wrap: balance;
-  }
-
-  .main-box-shadow {
-    box-shadow: 0 30px 50px 0 rgba(1, 1, 1, 0.15);
-  }
-}
-
-.content {
-  @apply container flex flex-shrink-0 flex-grow overflow-hidden lg:mx-auto lg:max-w-screen-xl; /* .content magin top .wrapper magin top/bottom - header height - heder margin top */
-}
-
-.title {
-  @apply relative text-center text-lg uppercase;
-  & h1:after {
-    @apply absolute bottom-0 left-1/2 h-[1px] w-[50px];
-    margin-left: -25px;
-    background: rgb(var(--light));
-  }
-}
-
-.nav-icon {
-  @apply h-7 text-white;
-}
-
-.nav-link {
-  @apply flex items-center gap-x-2 border-transparent pb-2 text-lg text-white hover:text-yellow-100;
-}
-
-.nav-link-button {
-  @apply flex gap-x-2 rounded border-l-4 border-transparent py-2 pl-3 pr-4 text-lg font-medium text-white hover:border-green-300 hover:bg-white hover:text-main-green sm:pl-5 sm:pr-6;
-
-  &.active {
-    @apply text-main-orange hover:border-main-orange hover:bg-white;
-
-    &:hover .nav-icon,
-    & .nav-icon {
-      @apply text-main-orange;
-    }
-  }
-
-  &:hover .nav-icon {
-    @apply text-main-green;
-  }
-}
-
-.nav-link-button-profile {
-  @apply block px-4 py-2 text-base font-medium text-gray-500 hover:bg-gray-100 hover:text-gray-800;
-}
-
-.nav-link-button-profile.active {
-  @apply bg-green-100 text-green-500;
-}
-
-.label {
-  @apply mb-2 block text-sm font-normal text-gray-900 dark:text-white lg:font-medium;
-}
-
-.input {
-  @apply min-w-0 flex-auto rounded-md border-0 px-3.5 py-2 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-green-600 sm:text-sm sm:leading-6;
-}
-
-.button {
-  @apply rounded-md bg-main-green px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-green-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-green-600;
-}
-
-.btn-sign-in {
-  @apply inline-flex items-center justify-center rounded-lg bg-main-green px-4 py-2.5 text-center text-sm font-medium text-white hover:bg-main-green/90 focus:outline-none focus:ring-4 focus:ring-main-green/50 dark:focus:ring-green-600;
-}
-

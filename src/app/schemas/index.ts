@@ -5,45 +5,45 @@ import * as z from 'zod'
 
 const DateFieldSchema: z.ZodType<DateValue> = z.any()
 
+export const RegisterSchema = z.object({
+  email: z.string().email({ message: 'Email inválido' }),
+  password: z
+    .string()
+    .min(8, { message: 'La contraseña debe tener al menos 8 caracteres' })
+    .regex(/[A-Z]/, { message: 'La contraseña debe tener al menos una letra mayúscula' })
+    .regex(/[a-z]/, { message: 'La contraseña debe tener al menos una letra minúscula' })
+    .regex(/[0-9]/, { message: 'La contraseña debe tener al menos un número' }),
+  confirmPassword: z.string(),
+  role: z.nativeEnum(Role),
+}).refine((data) => data.password === data.confirmPassword, {
+  message: 'Las contraseñas no coinciden',
+  path: ['confirmPassword'],
+});
+
 export const LoginSchema = z.object({
-    email: z.string().email({ message: 'El correo no es válido' }),
-    password: z.string(),
+  email: z.string().email({ message: 'El correo no es válido' }),
+  password: z.string(),
 })
 
-export const RegisterSchema = z
-    .object({
-        name: z.string(),
-        role: z.nativeEnum(Role),
-        email: z.string().email({ message: 'El correo no es válido' }),
-        password: z.string().min(8, { message: 'La contraseña debe tener al menos 8 caracteres' }),
-        password_confirm: z.string().min(8, { message: 'La contraseña debe tener al menos 8 caracteres' }),
-    })
-    .refine((data) => data.password === data.password_confirm, {
-        path: ['password_confirm'],
-        message: 'La contraseña no coincide',
-    })
-
 export const ReservationSchema = z
-    .object({
-        amenity: z.nativeEnum(Amenity, {
-            errorMap: () => {
-                return { message: 'Debe seleccionar un lugar' }
-            },
-        }),
-        date_at: DateFieldSchema,
-        shift: z.nativeEnum(SumShift, {
-            errorMap: () => {
-                return { message: 'Debe seleccionar un horario' }
-            },
-        }),
-        rooms: z.array(z.nativeEnum(SumRoom)),
-        observation: z.string().nullable(),
-    })
-    .refine((data) => (data.amenity === Amenity.Sum ? data.rooms.length > 0 : true), {
-        message: 'Debe seleccionar al menos un salón',
-        path: ['rooms'],
-    })
+  .object({
+    date: DateFieldSchema,
+    amenity: z.nativeEnum(Amenity),
+    rooms: z.array(z.nativeEnum(SumRoom)).optional(),
+    shift: z.nativeEnum(SumShift).optional(),
+    guestCount: z.number().min(1).max(50).optional(),
+    observation: z.string().nullable().optional(),
+  })
+  .refine((data) => {
+    if (data.amenity === Amenity.Sum) {
+      return Array.isArray(data.rooms) && data.rooms.length > 0;
+    }
+    return true;
+  }, {
+    message: 'Debe seleccionar al menos un salón',
+    path: ['rooms'],
+  });
 
 export const ReservationDBSchema = ReservationSchema.innerType().extend({
-    date_at: z.string(),
+  date_at: z.string(),
 })

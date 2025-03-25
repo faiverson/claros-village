@@ -1,49 +1,46 @@
-import { EyeIcon, EyeSlashIcon } from '@heroicons/react/24/outline'
-import { InputProps, Input as UIInput } from '@nextui-org/react'
-import React, { forwardRef, useState } from 'react'
+import React, { forwardRef, useState } from 'react';
+import Input from '@/components/base/Input';
+import { Eye, EyeOff } from 'lucide-react';
+import { cn } from '@/lib/utils';
 
-const PasswordInput = forwardRef(
-  (
-    { variant, radius, color, ...restProps }: InputProps,
-    inputRef: React.ForwardedRef<HTMLInputElement>,
-  ) => {
-    const themeColor: string =
-      !color || color === 'primary' ? 'main-green' : color
+interface PasswordInputProps extends React.InputHTMLAttributes<HTMLInputElement> {
+  label?: string;
+  error?: string;
+  wrapperClassName?: string;
+}
 
-    const [isVisible, setIsVisible] = useState(false)
+const PasswordInput = forwardRef<HTMLInputElement, PasswordInputProps>(
+  ({ className, ...props }, ref) => {
+    const [showPassword, setShowPassword] = useState(false);
 
-    const toggleVisibility = () => setIsVisible(!isVisible)
+    const togglePasswordVisibility = () => {
+      setShowPassword(!showPassword);
+    };
 
     return (
-      <UIInput
-        variant={variant || 'bordered'}
-        radius={radius || 'sm'}
-        color={color || 'success'}
-        classNames={{
-          inputWrapper: [
-            `border-${themeColor}/40`,
-            `hover:bg-${themeColor}/10`,
-          ],
-        }}
-        endContent={
-          <button
-            className="focus:outline-none"
-            type="button"
-            onClick={toggleVisibility}
-          >
-            {isVisible ? (
-              <EyeSlashIcon className="pointer-events-none w-6 text-2xl text-default-400" />
-            ) : (
-              <EyeIcon className="pointer-events-none w-6 text-2xl text-default-400" />
-            )}
-          </button>
-        }
-        type={isVisible ? 'text' : 'password'}
-        {...restProps}
-        ref={inputRef}
-      />
-    )
-  },
-)
+      <div className="relative">
+        <Input
+          type={showPassword ? 'text' : 'password'}
+          className={cn('pr-10', className)}
+          ref={ref}
+          {...props}
+        />
+        <button
+          type="button"
+          className="absolute inset-y-0 right-0 flex items-center pr-3 text-gray-400 hover:text-gray-500"
+          onClick={togglePasswordVisibility}
+        >
+          {showPassword ? (
+            <EyeOff className="h-5 w-5" aria-hidden="true" />
+          ) : (
+            <Eye className="h-5 w-5" aria-hidden="true" />
+          )}
+        </button>
+      </div>
+    );
+  }
+);
 
-export default PasswordInput
+PasswordInput.displayName = 'PasswordInput';
+
+export default PasswordInput;

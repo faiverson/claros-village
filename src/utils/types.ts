@@ -7,20 +7,41 @@ export interface User {
 }
 
 export enum SumShift {
-    Day = 'day',
-    Night = 'night',
-    Both = 'both',
+    Morning = 'MORNING',
+    Afternoon = 'AFTERNOON',
+    Evening = 'EVENING',
 }
 
 export enum Amenity {
-    Sum = 'sum',
-    Gym = 'gym',
-    Soccer = 'soccer',
+    Sum = 'SUM',
+    Pool = 'POOL',
+    Tennis = 'TENNIS',
+    Gym = 'GYM',
 }
 
 export enum SumRoom {
-    Big = 'big',
-    Small = 'small',
+    Main = 'MAIN',
+    Secondary = 'SECONDARY',
+    Outdoor = 'OUTDOOR',
 }
 
 export type AlertType = 'error' | 'success' | 'warning' | 'info'
+
+export type ReservationStatus = 'PENDING' | 'APPROVED' | 'REJECTED' | 'CANCELLED';
+
+export interface Reservation {
+  id: string;
+  userId: string;
+  amenityId: string;
+  date: Date;
+  status: ReservationStatus;
+  createdAt: Date;
+  updatedAt: Date;
+}
+
+export interface SumReservation extends Reservation {
+  roomId: string;
+  shiftId: string;
+  guestCount: number;
+  observation?: string;
+}
