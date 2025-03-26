@@ -1,9 +1,9 @@
 import NextAuth from "next-auth";
-import type { NextAuthOptions } from "next-auth";
 import { PrismaAdapter } from "@auth/prisma-adapter";
 import CredentialsProvider from "next-auth/providers/credentials";
 import bcrypt from "bcrypt";
 import { prisma } from "@/lib/prisma";
+import { AuthOptions } from 'next-auth';
 
 // Extend the session and JWT types
 declare module "next-auth" {
@@ -14,12 +14,16 @@ declare module "next-auth" {
       email?: string | null;
       image?: string | null;
       role?: string;
+      active?: boolean;
+      emailVerified?: Date | null;
     }
   }
 
   // Add role to the User type
   interface User {
     role?: string;
+    active?: boolean;
+    emailVerified?: Date | null;
   }
 }
 
@@ -27,17 +31,21 @@ declare module "next-auth/jwt" {
   interface JWT {
     id?: string;
     role?: string;
+    name?: string | null;
+    email?: string | null;
+    active?: boolean;
+    emailVerified?: Date | null;
   }
 }
 
-export const authOptions: NextAuthOptions = {
+export const authOptions: AuthOptions = {
   adapter: PrismaAdapter(prisma),
   providers: [
     CredentialsProvider({
       name: "Credentials",
       credentials: {
         email: { label: "Email", type: "email" },
-        password: { label: "Password", type: "password" }
+        password: { label: "Password", type: "password" },
       },
       async authorize(credentials) {
         if (!credentials?.email || !credentials?.password) {
@@ -63,36 +71,41 @@ export const authOptions: NextAuthOptions = {
           return null;
         }
 
-        return {
-          id: user.id,
-          email: user.email,
-          name: user.name,
-          role: user.role,
-        };
+        return user;
       },
     }),
   ],
   callbacks: {
     async jwt({ token, user }) {
       if (user) {
-        // @ts-ignore - We know user.role exists because we added it to the User interface
+        token.sub = user.id;
         token.role = user.role;
-        token.id = user.id;
+        token.name = user.name;
+        token.email = user.email;
+        token.active = user.active;
+        token.emailVerified = user.emailVerified;
       }
       return token;
     },
     async session({ session, token }) {
       if (session.user) {
+        session.user.id = token.sub as string;
         session.user.role = token.role;
-        session.user.id = token.id;
+        session.user.name = token.name;
+        session.user.email = token.email;
+        session.user.active = token.active;
+        session.user.emailVerified = token.emailVerified;
       }
       return session;
+    },
+    async signIn({ user }) {
+      if (user) return true;
+      return false;
     },
   },
   pages: {
     signIn: '/auth/signin',
     error: '/auth/error',
-    verifyRequest: '/auth/verify-request',
   },
   session: {
     strategy: "jwt",
@@ -101,4 +114,5 @@ export const authOptions: NextAuthOptions = {
 };
 
 const handler = NextAuth(authOptions);
+
 export { handler as GET, handler as POST };

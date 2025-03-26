@@ -3,6 +3,7 @@
 import { useEffect, useState } from 'react';
 import { useSearchParams, useRouter } from 'next/navigation';
 import Link from 'next/link';
+import { Loader2, CheckCircle2, XCircle, ArrowLeft } from 'lucide-react';
 
 export default function VerifyEmail() {
   const searchParams = useSearchParams();
@@ -12,30 +13,28 @@ export default function VerifyEmail() {
 
   useEffect(() => {
     const verifyEmail = async () => {
-      const token = searchParams.get('token');
+      const verificationToken = searchParams.get('token');
 
-      if (!token) {
+      if (!verificationToken) {
         setStatus('error');
         setMessage('Token de verificación no proporcionado');
         return;
       }
 
       try {
-        const response = await fetch(`/api/auth/verify?token=${token}`);
+        const response = await fetch(`/api/auth/verify?token=${verificationToken}`);
         const data = await response.json();
 
         if (response.ok) {
           setStatus('success');
           setMessage('¡Cuenta verificada exitosamente!');
-          // Redirect to login after 3 seconds
-          setTimeout(() => {
-            router.push('/auth/signin');
-          }, 3000);
+          // Redirect to login page after successful verification
+          router.push('/auth/signin');
         } else {
           setStatus('error');
           setMessage(data.message || 'Error al verificar la cuenta');
         }
-      } catch (error) {
+      } catch {
         setStatus('error');
         setMessage('Error al verificar la cuenta');
       }
@@ -52,56 +51,35 @@ export default function VerifyEmail() {
             Verificación de cuenta
           </h2>
         </div>
-        <div className="mt-8 text-center">
+        <div className="mt-8">
           {status === 'loading' && (
-            <div className="text-gray-600">
-              <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary mx-auto"></div>
-              <p className="mt-4">{message}</p>
+            <div className="flex items-center justify-center space-x-4 text-gray-600">
+              <Loader2 className="h-12 w-12 animate-spin" />
+              <p className="text-lg">{message}</p>
             </div>
           )}
           {status === 'success' && (
-            <div className="text-green-600">
-              <svg
-                className="mx-auto h-12 w-12"
-                fill="none"
-                stroke="currentColor"
-                viewBox="0 0 24 24"
-              >
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  strokeWidth={2}
-                  d="M5 13l4 4L19 7"
-                />
-              </svg>
-              <p className="mt-4">{message}</p>
-              <p className="mt-2 text-sm text-gray-600">
-                Serás redirigido al inicio de sesión en unos segundos...
-              </p>
+            <div className="flex flex-col items-center space-y-4">
+              <div className="flex items-center space-x-4 text-green-600">
+                <CheckCircle2 className="h-12 w-12" />
+                <p className="text-lg">{message}</p>
+              </div>
+              <p className="text-gray-600">Redirigiendo al inicio...</p>
             </div>
           )}
           {status === 'error' && (
-            <div className="text-red-600">
-              <svg
-                className="mx-auto h-12 w-12"
-                fill="none"
-                stroke="currentColor"
-                viewBox="0 0 24 24"
-              >
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  strokeWidth={2}
-                  d="M6 18L18 6M6 6l12 12"
-                />
-              </svg>
-              <p className="mt-4">{message}</p>
+            <div className="flex flex-col items-center space-y-4">
+              <div className="flex items-center space-x-2">
+                <XCircle className="h-8 w-8 text-red-600" />
+                <p className="text-xl text-red-600">{message}</p>
+              </div>
               <div className="mt-4">
                 <Link
                   href="/auth/signin"
-                  className="text-primary hover:text-primary-600"
+                  className="flex items-center space-x-2 text-primary-600 hover:text-primary-500"
                 >
-                  Volver al inicio de sesión
+                  <ArrowLeft className="h-4 w-4" />
+                  <span>Volver al inicio de sesión</span>
                 </Link>
               </div>
             </div>

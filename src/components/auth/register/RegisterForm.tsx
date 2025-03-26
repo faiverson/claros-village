@@ -1,194 +1,296 @@
-'use client'
+'use client';
 
-import signUp from '@/actions/register'
-import Alert from '@/components/base/Alert'
-import Input from '@/components/base/Input'
-import PasswordInput from '@/app/components/base/PasswordInput'
-import { RegisterSchema } from '@/app/schemas'
-import { zodResolver } from '@hookform/resolvers/zod'
-import { Button } from '@/components/ui/button'
-import {
-  Dialog,
-  DialogContent,
-  DialogDescription,
-  DialogFooter,
-  DialogHeader,
-  DialogTitle,
-} from '@/components/ui/dialog'
-import {
-  RadioGroup,
-  RadioGroupItem,
-} from '@/components/ui/radio-group'
-import { Role, type User } from '@prisma/client'
-import { useTranslations } from 'next-intl'
-import Link from 'next/link'
-import { useRouter } from 'next/navigation'
-import { useState, useTransition } from 'react'
-import { Controller, SubmitHandler, useForm } from 'react-hook-form'
-import { z } from 'zod'
+import { useState } from 'react';
+import Link from 'next/link';
+import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
+import { registerSchema, type RegisterInput } from '@/lib/validations/auth';
+import { zodResolver } from '@hookform/resolvers/zod';
+import { useForm } from 'react-hook-form';
+import { Role } from '@prisma/client';
+import dynamic from 'next/dynamic';
+import type { CSSObjectWithLabel, StylesConfig } from 'react-select';
 
-export default function RegisterForm() {
-  const router = useRouter()
-  const [errorMessage, setErrorMessage] = useState('')
-  const [isPending, startTransition] = useTransition()
-  const [showConfirmation, setShowConfirmation] = useState(false)
-  const [registeredUser, setRegisteredUser] = useState<User | null>(null)
+const Select = dynamic(() => import('react-select'), {
+  ssr: false,
+});
 
-  const t = useTranslations('RegisterForm')
+interface RegisterFormProps {
+  units: string[];
+}
+
+interface UnitOption {
+  value: string;
+  label: string;
+}
+
+export function RegisterForm({ units }: RegisterFormProps) {
+  const [error, setError] = useState<string | null>(null);
+  const [loading, setLoading] = useState(false);
+  const [success, setSuccess] = useState(false);
+  const [selectedRole, setSelectedRole] = useState<Role>(Role.LANDLORD);
 
   const {
     register,
     handleSubmit,
-    control,
     formState: { errors },
-  } = useForm<z.infer<typeof RegisterSchema>>({
-    resolver: zodResolver(RegisterSchema),
+    reset,
+    setValue,
+  } = useForm<RegisterInput>({
+    resolver: zodResolver(registerSchema),
     defaultValues: {
-      email: '',
-      password: '',
-      confirmPassword: '',
-      role: Role.RENTER,
+      role: Role.LANDLORD,
     },
-  })
+  });
 
-  const onSubmit: SubmitHandler<z.infer<typeof RegisterSchema>> = async (
-    data,
-    ev,
-  ) => {
-    ev?.preventDefault()
+  const resetForm = () => {
+    setSuccess(false);
+    setError(null);
+    reset();
+    setSelectedRole(Role.LANDLORD);
+  };
 
-    startTransition(async () => {
-      try {
-        const result = await signUp(data)
+  const onSubmit = async (data: RegisterInput) => {
+    try {
+      setError(null);
+      setLoading(true);
 
-        if (!result.success) {
-          if (result.error === 'user_exist') {
-            setErrorMessage('El usuario ya existe')
-          } else if (result.error === 'resident_not_found') {
-            setErrorMessage('Residente no encontrado')
-          } else {
-            setErrorMessage('Error al registrar usuario')
-          }
-          return
-        }
+      const res = await fetch('/api/auth/register', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(data),
+      });
 
-        setRegisteredUser(result.data)
-        setShowConfirmation(true)
-      } catch (error) {
-        console.error('Registration error:', error)
-        setErrorMessage('Error al registrar usuario')
+      if (!res.ok) {
+        const errorData = await res.json();
+        throw new Error(errorData.message || 'Algo salió mal');
       }
-    })
-  }
 
-  const handleCloseConfirmation = () => {
-    setShowConfirmation(false)
-    router.push('/auth/signin')
+      setSuccess(true);
+    } catch (error) {
+      setError(error instanceof Error ? error.message : 'Algo salió mal');
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const unitOptions = units.map(unit => ({
+    value: unit,
+    label: unit
+  }));
+
+  const customStyles: StylesConfig<UnitOption> = {
+    control: (base: CSSObjectWithLabel) => ({
+      ...base,
+      minHeight: '42px',
+      borderRadius: '0.375rem',
+      borderColor: errors.unidad ? '#ef4444' : '#d1d5db',
+      '&:hover': {
+        borderColor: errors.unidad ? '#ef4444' : '#9ca3af',
+      },
+      '&:focus-within': {
+        borderColor: errors.unidad ? '#ef4444' : '#2563eb',
+        boxShadow: '0 0 0 1px #2563eb',
+      },
+    }),
+    menu: (base: CSSObjectWithLabel) => ({
+      ...base,
+      zIndex: 9999,
+    }),
+    option: (base: CSSObjectWithLabel, state: { isFocused: boolean }) => ({
+      ...base,
+      backgroundColor: state.isFocused ? '#f3f4f6' : 'white',
+      color: '#1f2937',
+      '&:hover': {
+        backgroundColor: '#f3f4f6',
+      },
+    }),
+  };
+
+  if (success) {
+    return (
+      <div className="min-h-screen flex items-center justify-center bg-gray-50 py-12 px-4 sm:px-6 lg:px-8">
+        <div className="max-w-md w-full space-y-8">
+          <div className="rounded-md bg-green-50 p-4">
+            <div className="flex">
+              <div className="flex-shrink-0">
+                <svg className="h-5 w-5 text-green-400" viewBox="0 0 20 20" fill="currentColor">
+                  <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" />
+                </svg>
+              </div>
+              <div className="ml-3">
+                <h3 className="text-sm font-medium text-green-800">
+                  Registro exitoso
+                </h3>
+                <div className="mt-2 text-sm text-green-700">
+                  <p>
+                    Te hemos enviado un correo electrónico con instrucciones para verificar tu cuenta.
+                    Por favor revisa tu bandeja de entrada.
+                  </p>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div className="flex gap-4 justify-center mt-6">
+            <Link
+              href="/"
+              className="inline-flex justify-center py-2 px-4 border border-transparent shadow-sm text-sm font-medium rounded-md text-white bg-primary-500 hover:bg-primary-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary"
+            >
+              Ir al inicio
+            </Link>
+            <button
+              onClick={resetForm}
+              className="inline-flex justify-center py-2 px-4 border border-primary shadow-sm text-sm font-medium rounded-md text-primary bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary"
+            >
+              Registrar otra cuenta
+            </button>
+          </div>
+        </div>
+      </div>
+    );
   }
 
   return (
-    <div className="flex min-h-screen flex-col items-center justify-center py-12 px-4 sm:px-6 lg:px-8 bg-gray-50">
-      <div className="w-full max-w-md space-y-8">
+    <div className="min-h-screen flex items-center justify-center bg-gray-50 py-12 px-4 sm:px-6 lg:px-8">
+      <div className="max-w-md w-full space-y-8">
         <div>
-          <h2 className="mt-6 text-center text-3xl font-bold tracking-tight text-gray-900">
-            {t('welcome')}
+          <h2 className="mt-6 text-center text-3xl font-extrabold text-gray-900">
+            Crear cuenta
           </h2>
           <p className="mt-2 text-center text-sm text-gray-600">
-            {t('account')}{' '}
-            <Link
-              href="/auth/signin"
-              className="font-medium text-primary-500 hover:text-primary-500/80"
-            >
-              {t('here')}
+            O{' '}
+            <Link href="/auth/signin" className="font-medium text-primary hover:text-primary-600">
+              iniciar sesión
             </Link>
           </p>
         </div>
-
-        {errorMessage && (
-          <Alert variant="error" message={errorMessage} />
-        )}
-
         <form className="mt-8 space-y-6" onSubmit={handleSubmit(onSubmit)}>
           <div className="space-y-4">
             <div>
-              <Input
-                label={t('email')}
-                placeholder={t('email_placeholder')}
-                {...register('email')}
-                error={errors.email?.message}
+              <label htmlFor="name" className="sr-only">
+                Nombre completo
+              </label>
+              <input
+                id="name"
+                {...register('name')}
+                type="text"
+                className="appearance-none rounded-md relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 focus:outline-none focus:ring-primary focus:border-primary focus:z-10 sm:text-sm"
+                placeholder="Nombre completo"
               />
-            </div>
-
-            <div>
-              <PasswordInput
-                label={t('password')}
-                placeholder={t('password_placeholder')}
-                {...register('password')}
-                error={errors.password?.message}
-              />
-            </div>
-
-            <div>
-              <PasswordInput
-                label={t('password_confirm')}
-                placeholder={t('password_confirm_placeholder')}
-                {...register('confirmPassword')}
-                error={errors.confirmPassword?.message}
-              />
-            </div>
-
-            <Controller
-              name="role"
-              control={control}
-              render={({ field }) => (
-                <RadioGroup
-                  defaultValue={field.value}
-                  onValueChange={field.onChange}
-                  className="flex flex-col space-y-1"
-                >
-                  <div className="mb-2">{t('roleType')}</div>
-                  <div className="flex space-x-4">
-                    <div className="flex items-center space-x-2">
-                      <RadioGroupItem value={Role.RENTER} id="renter" />
-                      <label htmlFor="renter">{t('renter')}</label>
-                    </div>
-                    <div className="flex items-center space-x-2">
-                      <RadioGroupItem value={Role.LANDLORD} id="landlord" />
-                      <label htmlFor="landlord">{t('landlord')}</label>
-                    </div>
-                  </div>
-                </RadioGroup>
+              {errors.name && (
+                <p className="mt-1 text-xs text-red-500">{errors.name.message}</p>
               )}
-            />
+            </div>
+            <div>
+              <label htmlFor="email" className="sr-only">
+                Correo electrónico
+              </label>
+              <input
+                id="email"
+                {...register('email')}
+                type="email"
+                autoComplete="email"
+                className="appearance-none rounded-md relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 focus:outline-none focus:ring-primary focus:border-primary focus:z-10 sm:text-sm"
+                placeholder="Correo electrónico"
+              />
+              {errors.email && (
+                <p className="mt-1 text-xs text-red-500">{errors.email.message}</p>
+              )}
+            </div>
+            <div>
+              <label htmlFor="password" className="sr-only">
+                Contraseña
+              </label>
+              <input
+                id="password"
+                {...register('password')}
+                type="password"
+                autoComplete="new-password"
+                className="appearance-none rounded-md relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 focus:outline-none focus:ring-primary focus:border-primary focus:z-10 sm:text-sm"
+                placeholder="Contraseña"
+              />
+              {errors.password && (
+                <p className="mt-1 text-xs text-red-500">{errors.password.message}</p>
+              )}
+            </div>
+            <div>
+              <label htmlFor="confirmPassword" className="sr-only">
+                Confirmar contraseña
+              </label>
+              <input
+                id="confirmPassword"
+                {...register('confirmPassword')}
+                type="password"
+                autoComplete="new-password"
+                className="appearance-none rounded-md relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 focus:outline-none focus:ring-primary focus:border-primary focus:z-10 sm:text-sm"
+                placeholder="Confirmar contraseña"
+              />
+              {errors.confirmPassword && (
+                <p className="mt-1 text-xs text-red-500">{errors.confirmPassword.message}</p>
+              )}
+            </div>
+            <div>
+              <label htmlFor="unidad" className="sr-only">
+                Unidad
+              </label>
+              <Select
+                id="unidad"
+                options={unitOptions}
+                onChange={(option) => setValue('unidad', option?.value || '')}
+                placeholder="Seleccionar Unidad"
+                styles={customStyles}
+                isClearable
+                isSearchable
+                noOptionsMessage={() => "No hay unidades disponibles"}
+                className="react-select-container"
+                classNamePrefix="react-select"
+              />
+              {errors.unidad && (
+                <p className="mt-1 text-xs text-red-500">{errors.unidad.message}</p>
+              )}
+            </div>
+            <div className="mt-4">
+              <RadioGroup
+                value={selectedRole}
+                onValueChange={(value) => {
+                  setSelectedRole(value as Role);
+                  setValue('role', value as Role);
+                }}
+                className="flex flex-row space-x-4"
+              >
+                <div className="flex items-center space-x-2">
+                  <RadioGroupItem value={Role.RENTER} id="renter" />
+                  <label htmlFor="renter" className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70">
+                    Inquilino
+                  </label>
+                </div>
+                <div className="flex items-center space-x-2">
+                  <RadioGroupItem value={Role.LANDLORD} id="landlord" />
+                  <label htmlFor="landlord" className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70">
+                    Propietario
+                  </label>
+                </div>
+              </RadioGroup>
+            </div>
           </div>
 
+          {error && (
+            <div className="text-red-500 text-sm text-center">{error}</div>
+          )}
+
           <div>
-            <Button
+            <button
               type="submit"
-              className="w-full"
-              disabled={isPending}
+              disabled={loading}
+              className="group relative w-full flex justify-center py-2 px-4 border border-transparent text-sm font-medium rounded-md text-white bg-primary-500 hover:bg-primary-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary-500 disabled:opacity-50 disabled:cursor-not-allowed"
             >
-              {isPending ? 'Registrando...' : t('btn_register')}
-            </Button>
+              {loading ? 'Creando cuenta...' : 'Crear cuenta'}
+            </button>
           </div>
         </form>
       </div>
-
-      <Dialog open={showConfirmation} onOpenChange={setShowConfirmation}>
-        <DialogContent>
-          <DialogHeader>
-            <DialogTitle>¡Falta solo un poco!</DialogTitle>
-            <DialogDescription>
-              Tu cuenta ha sido creada con éxito. Por favor, revisa tu correo electrónico para verificar tu cuenta.
-            </DialogDescription>
-          </DialogHeader>
-          <DialogFooter>
-            <Button onClick={handleCloseConfirmation}>
-              Ir a iniciar sesión
-            </Button>
-          </DialogFooter>
-        </DialogContent>
-      </Dialog>
     </div>
-  )
+  );
 }

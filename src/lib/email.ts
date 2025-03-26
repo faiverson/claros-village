@@ -10,13 +10,14 @@ interface ResendError {
 
 export async function sendVerificationEmail(email: string, name: string, verificationUrl: string) {
   try {
-    console.log('Attempting to send verification email:', {
+    console.log('Starting email sending process...');
+    console.log('Email parameters:', {
       to: email,
       name,
       verificationUrl,
     });
 
-    const { data, error } = await resend.emails.send({
+    const { error } = await resend.emails.send({
       from: process.env.RESEND_FROM_EMAIL!,
       to: email,
       subject: 'Verifica tu cuenta - Claros Village',
@@ -38,12 +39,13 @@ export async function sendVerificationEmail(email: string, name: string, verific
     });
 
     if (error) {
+      console.error('Email sending error:', {
+        error,
+        errorMessage: error.message,
+        errorName: error.name,
+      });
       throw error;
     }
-
-    console.log('Email sent successfully:', {
-      id: data?.id,
-    });
 
     return true;
   } catch (error: unknown) {
