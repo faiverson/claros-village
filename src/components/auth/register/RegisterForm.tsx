@@ -9,6 +9,8 @@ import { useForm } from 'react-hook-form'
 import { Role } from '@prisma/client'
 import dynamic from 'next/dynamic'
 import type { CSSObjectWithLabel, StylesConfig } from 'react-select'
+import { CVPassword } from '@/components/ui/cv-password'
+import { CVEmail } from '@/components/ui/cv-email'
 
 const Select = dynamic(() => import('react-select'), {
   ssr: false,
@@ -182,46 +184,34 @@ export function RegisterForm({ units }: RegisterFormProps) {
               {errors.name && <p className="mt-1 text-xs text-red-500">{errors.name.message}</p>}
             </div>
             <div>
-              <label htmlFor="email" className="sr-only">
-                Correo electrónico
-              </label>
-              <input
+              <CVEmail
                 id="email"
                 {...register('email')}
-                type="email"
                 autoComplete="email"
-                className="appearance-none rounded-md relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 focus:outline-none focus:ring-primary focus:border-primary focus:z-10 sm:text-sm"
                 placeholder="Correo electrónico"
+                error={errors.email?.message}
+                label="Correo electrónico"
               />
-              {errors.email && <p className="mt-1 text-xs text-red-500">{errors.email.message}</p>}
             </div>
             <div>
-              <label htmlFor="password" className="sr-only">
-                Contraseña
-              </label>
-              <input
+              <CVPassword
                 id="password"
                 {...register('password')}
-                type="password"
                 autoComplete="new-password"
-                className="appearance-none rounded-md relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 focus:outline-none focus:ring-primary focus:border-primary focus:z-10 sm:text-sm"
                 placeholder="Contraseña"
+                error={errors.password?.message}
+                label="Contraseña"
               />
-              {errors.password && <p className="mt-1 text-xs text-red-500">{errors.password.message}</p>}
             </div>
             <div>
-              <label htmlFor="confirmPassword" className="sr-only">
-                Confirmar contraseña
-              </label>
-              <input
+              <CVPassword
                 id="confirmPassword"
                 {...register('confirmPassword')}
-                type="password"
                 autoComplete="new-password"
-                className="appearance-none rounded-md relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 focus:outline-none focus:ring-primary focus:border-primary focus:z-10 sm:text-sm"
                 placeholder="Confirmar contraseña"
+                error={errors.confirmPassword?.message}
+                label="Confirmar contraseña"
               />
-              {errors.confirmPassword && <p className="mt-1 text-xs text-red-500">{errors.confirmPassword.message}</p>}
             </div>
             <div>
               <label htmlFor="unidad" className="sr-only">

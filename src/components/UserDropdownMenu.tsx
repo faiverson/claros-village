@@ -1,24 +1,24 @@
-'use client';
+'use client'
 
-import { signOut } from 'next-auth/react';
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuTrigger,
-} from '@/components/ui/dropdown-menu';
-import { Button } from '@/components/ui/button';
-import { LogOut, Building } from 'lucide-react';
-import { Session } from 'next-auth';
-import { Avatar, AvatarFallback } from '@/components/ui/avatar';
-import Link from 'next/link';
+import { signOut } from 'next-auth/react'
+import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from '@/components/ui/dropdown-menu'
+import { Button } from '@/components/ui/button'
+import { LogOut, Building, Users } from 'lucide-react'
+import { Session } from 'next-auth'
+import { Avatar, AvatarFallback } from '@/components/ui/avatar'
+import Link from 'next/link'
 
 interface UserDropdownMenuProps {
-  user: Session['user'];
+  user: Session['user']
 }
 
 export function UserDropdownMenu({ user }: UserDropdownMenuProps) {
-  const hasAvatar = user.image;
+  const hasAvatar = user.image
+  const canAccessUsers = user.role === 'admin' || user.role === 'manager' || user.role === 'guard'
+
+  const handleSignOut = () => {
+    signOut({ callbackUrl: '/' })
+  }
 
   return (
     <DropdownMenu>
@@ -42,11 +42,19 @@ export function UserDropdownMenu({ user }: UserDropdownMenuProps) {
             Espacios comunes
           </DropdownMenuItem>
         </Link>
-        <DropdownMenuItem onClick={() => signOut()} className="text-xs hover:bg-gray-100 cursor-pointer">
+        {canAccessUsers && (
+          <Link href="/usuarios">
+            <DropdownMenuItem className="text-xs hover:bg-gray-100 cursor-pointer">
+              <Users className="mr-2 h-4 w-4" />
+              Usuarios
+            </DropdownMenuItem>
+          </Link>
+        )}
+        <DropdownMenuItem onClick={handleSignOut} className="text-xs hover:bg-gray-100 cursor-pointer">
           <LogOut className="mr-2 h-4 w-4" />
           Cerrar sesión
         </DropdownMenuItem>
       </DropdownMenuContent>
     </DropdownMenu>
-  );
+  )
 }

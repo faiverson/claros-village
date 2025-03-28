@@ -4,16 +4,31 @@ import type { NextRequest } from 'next/server';
 
 export async function middleware(request: NextRequest) {
   const token = await getToken({ req: request });
-  const isAuthPage = request.nextUrl.pathname.startsWith('/login');
+  const pathname = request.nextUrl.pathname;
 
-  if (!token && !isAuthPage) {
-    const loginUrl = new URL('/login', request.url);
-    loginUrl.searchParams.set('callbackUrl', request.nextUrl.pathname);
+  // Public paths that don't require authentication
+  const publicPaths = ['/', '/auth/signin', '/auth/register', '/auth/verify', '/auth/error'];
+  const isPublicPath = publicPaths.some(path => pathname === path);
+
+  // Protected paths that require authentication
+  const protectedPaths = ['/espacios-comunes', '/usuarios'];
+  const isProtectedPath = protectedPaths.some(path => pathname.startsWith(path));
+
+  // Allow access to public paths
+  if (isPublicPath) {
+    return NextResponse.next();
+  }
+
+  // Redirect to login if accessing protected path without token
+  if (!token && isProtectedPath) {
+    const loginUrl = new URL('/auth/signin', request.url);
+    loginUrl.searchParams.set('callbackUrl', pathname);
     return NextResponse.redirect(loginUrl);
   }
 
-  if (token && isAuthPage) {
-    return NextResponse.redirect(new URL('/reservations', request.url));
+  // Redirect to home if accessing auth pages with token
+  if (token && pathname.startsWith('/auth/')) {
+    return NextResponse.redirect(new URL('/', request.url));
   }
 
   return NextResponse.next();

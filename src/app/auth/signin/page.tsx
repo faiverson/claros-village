@@ -7,6 +7,8 @@ import Link from 'next/link'
 import { loginSchema, type LoginInput } from '@/lib/validations/auth'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { useForm } from 'react-hook-form'
+import { CVPassword } from '@/components/ui/cv-password'
+import { CVEmail } from '@/components/ui/cv-email'
 
 export default function SignIn() {
   const router = useRouter()
@@ -83,34 +85,26 @@ export default function SignIn() {
           </p>
         </div>
         <form className="mt-8 space-y-6" onSubmit={handleSubmit(onSubmit)}>
-          <div className="rounded-md shadow-sm -space-y-px">
+          <div className="space-y-4">
             <div>
-              <label htmlFor="email" className="sr-only">
-                Correo electrónico
-              </label>
-              <input
+              <CVEmail
                 id="email"
                 {...register('email')}
-                type="email"
                 autoComplete="email"
-                className="appearance-none rounded-none relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 rounded-t-md focus:outline-none focus:ring-primary focus:border-primary focus:z-10 sm:text-sm"
                 placeholder="Correo electrónico"
+                error={errors.email?.message}
+                label="Correo electrónico"
               />
-              {errors.email && <p className="mt-1 text-xs text-red-500">{errors.email.message}</p>}
             </div>
             <div>
-              <label htmlFor="password" className="sr-only">
-                Contraseña
-              </label>
-              <input
+              <CVPassword
                 id="password"
                 {...register('password')}
-                type="password"
                 autoComplete="current-password"
-                className="appearance-none rounded-none relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 rounded-b-md focus:outline-none focus:ring-primary focus:border-primary focus:z-10 sm:text-sm"
                 placeholder="Contraseña"
+                error={errors.password?.message}
+                label="Contraseña"
               />
-              {errors.password && <p className="mt-1 text-xs text-red-500">{errors.password.message}</p>}
             </div>
           </div>
 

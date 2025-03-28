@@ -9,8 +9,11 @@ export async function GET() {
         name: true,
         email: true,
         role: true,
-        createdAt: true,
-        updatedAt: true,
+        active: true,
+        emailVerified: true,
+      },
+      orderBy: {
+        createdAt: 'desc',
       },
     });
 
