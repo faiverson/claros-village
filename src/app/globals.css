@@ -1,6 +1,7 @@
 @import "tailwindcss";
 
 @theme {
+  --color-primary: #16a34a;
   --color-primary-50: #f0fdf4;
   --color-primary-100: #dcfce7;
   --color-primary-200: #bbf7d0;
@@ -11,6 +12,7 @@
   --color-primary-700: #166534;
   --color-primary-800: #14532d;
   --color-primary-900: #052e16;
+  --color-destructive: #ef4444;
   --color-destructive-50: #fef2f2;
   --color-destructive-100: #fee2e2;
   --color-destructive-200: #fecaca;
@@ -21,27 +23,41 @@
   --color-destructive-700: #b91c1c;
   --color-destructive-800: #991b1b;
   --color-destructive-900: #7f1d1d;
-  --color-accent-50: #fefce8;
-  --color-accent-100: #fef9c3;
-  --color-accent-200: #fef08a;
-  --color-accent-300: #fde047;
-  --color-accent-400: #facc15;
-  --color-accent-500: #eab308;
-  --color-accent-600: #ca8a04;
-  --color-accent-700: #a16207;
-  --color-accent-800: #854d0e;
-  --color-accent-900: #713f12;
-  --background: #ffffff;
-  --foreground: #000000;
-  --card: #ffffff;
-  --card-foreground: #000000;
-  --popover: #ffffff;
-  --popover-foreground: #000000;
-  --muted: #f3f4f6;
-  --muted-foreground: #6b7280;
+  --color-secondary: #eab308;
+  --color-secondary-50: #fefce8;
+  --color-secondary-100: #fef9c3;
+  --color-secondary-200: #fef08a;
+  --color-secondary-300: #fde047;
+  --color-secondary-400: #facc15;
+  --color-secondary-500: #eab308;
+  --color-secondary-600: #ca8a04;
+  --color-secondary-700: #a16207;
+  --color-secondary-800: #854d0e;
+  --color-secondary-900: #713f12;
+  --color-accent-50: #f0f9ff;
+  --color-accent: #0ea5e9;
+  --color-accent-100: #e0f2fe;
+  --color-accent-200: #bae6fd;
+  --color-accent-300: #7dd3fc;
+  --color-accent-400: #38bdf8;
+  --color-accent-500: #0ea5e9;
+  --color-accent-600: #0284c7;
+  --color-accent-700: #0369a1;
+  --color-accent-800: #075985;
+  --color-accent-900: #0c4a6e;
+  --color-accent-foreground: #ffffff;
+  --color-background: #ffffff;
+  --color-foreground: #000000;
+  --color-card:  #6b7280;
+  --color-card-foreground: #000000;
+  --color-popover: #ffffff;
+  --color-popover-foreground: #000000;
+  --color-muted: #f3f4f6;
+  --color-muted-foreground: #6b7280;
+  --color-primary-foreground: #000000;
 }
 
-@theme @media (prefers-color-scheme: dark) {
+/* @theme @media (prefers-color-scheme: dark) {
   --color-primary-50: #052e16;
   --color-primary-100: #14532d;
   --color-primary-200: #166534;
@@ -74,4 +90,4 @@
   --color-accent-900: #fefce8;
   --background: #171717;
   --foreground: #ffffff;
-}
+} */

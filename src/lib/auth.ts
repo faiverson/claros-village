@@ -1,7 +1,11 @@
 import { compare } from 'bcryptjs';
 import { prisma } from '@/lib/prisma';
+interface Credentials {
+  email: string;
+  password: string;
+}
 
-export async function authorize(credentials: any) {
+export async function authorize(credentials: Credentials) {
   try {
     const user = await prisma.user.findUnique({
       where: { email: credentials.email },

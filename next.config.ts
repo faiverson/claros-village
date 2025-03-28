@@ -1,7 +1,7 @@
 import type { NextConfig } from 'next'
 
 const nextConfig: NextConfig = {
-  reactStrictMode: true,
+  reactStrictMode: process.env.NEXT_PUBLIC_STRICT_MODE === 'true',
   images: {
     remotePatterns: [
       {
@@ -14,6 +14,12 @@ const nextConfig: NextConfig = {
       },
     ],
   },
+  eslint: {
+    // Warning: This allows production builds to successfully complete even if
+    // your project has ESLint errors.
+    ignoreDuringBuilds: false,
+    dirs: ['pages', 'components', 'lib', 'src', 'app']
+  }
 };
 
 export default nextConfig;
