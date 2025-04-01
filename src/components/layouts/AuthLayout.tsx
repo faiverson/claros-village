@@ -15,7 +15,7 @@ const navLinks = [
 export async function AuthLayout({ children }: AuthLayoutProps) {
   const session = await getServerSession()
 
-  if (!session) redirect('/login')
+  if (!session) redirect('/')
 
   return (
     <div className="flex flex-col min-h-screen">

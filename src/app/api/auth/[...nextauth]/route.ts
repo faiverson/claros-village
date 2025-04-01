@@ -1,9 +1,10 @@
 import NextAuth from "next-auth";
 import { PrismaAdapter } from "@auth/prisma-adapter";
 import CredentialsProvider from "next-auth/providers/credentials";
-import bcrypt from "bcrypt";
 import { prisma } from "@/lib/prisma";
 import { AuthOptions } from 'next-auth';
+import { verifyPassword } from '@/lib/utils/password';
+import { Role } from '@prisma/client';
 
 // Extend the session and JWT types
 declare module "next-auth" {
@@ -13,7 +14,7 @@ declare module "next-auth" {
       name?: string | null;
       email?: string | null;
       image?: string | null;
-      role?: string;
+      role?: Role;
       active?: boolean;
       emailVerified?: Date | null;
     }
@@ -21,7 +22,7 @@ declare module "next-auth" {
 
   // Add role to the User type
   interface User {
-    role?: string;
+    role?: Role;
     active?: boolean;
     emailVerified?: Date | null;
   }
@@ -30,7 +31,7 @@ declare module "next-auth" {
 declare module "next-auth/jwt" {
   interface JWT {
     id?: string;
-    role?: string;
+    role?: Role;
     name?: string | null;
     email?: string | null;
     active?: boolean;
@@ -56,35 +57,55 @@ export const authOptions: AuthOptions = {
           where: {
             email: credentials.email,
           },
+          select: {
+            id: true,
+            name: true,
+            email: true,
+            password: true,
+            role: true,
+            active: true,
+            emailVerified: true,
+          },
         });
+
+        console.log('Found user:', user); // Debug log
 
         if (!user || !user.password) {
           return null;
         }
 
-        const isPasswordValid = await bcrypt.compare(
-          credentials.password,
-          user.password
+        const isPasswordValid = await verifyPassword(
+          user.password,
+          credentials.password
         );
 
         if (!isPasswordValid) {
           return null;
         }
 
-        return user;
+        return {
+          id: user.id,
+          name: user.name,
+          email: user.email,
+          role: user.role,
+          active: user.active,
+          emailVerified: user.emailVerified,
+        };
       },
     }),
   ],
   callbacks: {
     async jwt({ token, user }) {
       if (user) {
+        console.log('JWT user:', user); // Debug log
         token.sub = user.id;
-        token.role = user.role;
+        token.role = user.role as Role; // Explicitly cast the role
         token.name = user.name;
         token.email = user.email;
         token.active = user.active;
         token.emailVerified = user.emailVerified;
       }
+      console.log('JWT token:', token); // Debug log
       return token;
     },
     async session({ session, token }) {

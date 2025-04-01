@@ -1,5 +1,6 @@
-import { compare } from 'bcryptjs';
 import { prisma } from '@/lib/prisma';
+import { verifyPassword } from '@/lib/utils/password';
+
 interface Credentials {
   email: string;
   password: string;
@@ -23,7 +24,7 @@ export async function authorize(credentials: Credentials) {
       throw new Error('Por favor verifica tu correo electrónico antes de iniciar sesión.');
     }
 
-    const isValid = await compare(credentials.password, user.password!);
+    const isValid = await verifyPassword(user.password!, credentials.password);
 
     if (!isValid) {
       throw new Error('Credenciales inválidas');

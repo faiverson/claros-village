@@ -1,9 +1,9 @@
 import { NextResponse } from 'next/server';
-import { hash } from 'bcryptjs';
 import { prisma } from '@/lib/prisma';
 import { randomBytes } from 'crypto';
 import { sendVerificationEmail } from '@/lib/email';
 import { Role, User, VerificationTokenType } from '@prisma/client';
+import { getHashedPassword } from '@/lib/utils/password';
 
 async function createVerificationToken(userId: string) {
   const token = randomBytes(32).toString('hex');
@@ -42,7 +42,7 @@ async function handleInactiveUser(user: User, email: string, name: string) {
 }
 
 async function createNewUser(email: string, password: string, name: string, role: Role, residentId: string) {
-  const hashedPassword = await hash(password, 12);
+  const hashedPassword = await getHashedPassword(password);
 
   const user = await prisma.user.create({
     data: {

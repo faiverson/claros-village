@@ -4,7 +4,7 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@
 import { CheckCircle2, XCircle, User, Mail, Shield, Activity, CheckCircle, Plus } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import Link from 'next/link'
-import { redirect } from 'next/navigation'
+import { Role } from '@prisma/client'
 
 interface User {
   id: string
@@ -17,19 +17,12 @@ interface User {
 
 export default async function UsuariosPage() {
   const session = await getServerSession(authOptions)
-
-  // Check if user has required role
-  const userRole = session?.user?.role
-  if (!userRole || !['admin', 'manager', 'guard'].includes(userRole)) {
-    redirect('/')
-  }
-
   const response = await fetch(`${process.env.NEXT_PUBLIC_APP_URL}/api/users`, {
     cache: 'no-store',
   })
   const users: User[] = await response.json()
 
-  const canAddUsers = userRole === 'admin' || userRole === 'manager'
+  const canAddUsers = session?.user.role && (session.user.role === Role.ADMIN || session.user.role === Role.MANAGER)
 
   return (
     <div className="space-y-6">
@@ -45,7 +38,7 @@ export default async function UsuariosPage() {
         )}
       </div>
       <div className="rounded-md border border-primary-500 bg-white shadow-sm">
-        <Table>
+        <Table className="border-collapse">
           <TableHeader>
             <TableRow className="bg-primary-50/50">
               <TableHead className="font-semibold">
@@ -83,8 +76,8 @@ export default async function UsuariosPage() {
           <TableBody>
             {users.map((user) => (
               <TableRow key={user.id} className="hover:bg-accent-50 transition-colors">
-                <TableCell className="font-medium text-primary-900">{user.name}</TableCell>
-                <TableCell className="text-primary-700">{user.email}</TableCell>
+                <TableCell className="font-medium">{user.name}</TableCell>
+                <TableCell>{user.email}</TableCell>
                 <TableCell>
                   <span className="inline-flex items-center gap-1 rounded-full px-2 py-1 text-xs font-medium bg-primary-100 text-primary-700">
                     {user.role}
