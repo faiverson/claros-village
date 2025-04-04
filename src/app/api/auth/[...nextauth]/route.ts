@@ -13,18 +13,18 @@ declare module "next-auth" {
       id?: string;
       name?: string | null;
       email?: string | null;
+      phone?: string | null;
       image?: string | null;
       role?: Role;
       active?: boolean;
-      emailVerified?: Date | null;
     }
   }
 
-  // Add role to the User type
   interface User {
     role?: Role;
     active?: boolean;
     emailVerified?: Date | null;
+    phone?: string | null;
   }
 }
 
@@ -34,8 +34,8 @@ declare module "next-auth/jwt" {
     role?: Role;
     name?: string | null;
     email?: string | null;
+    phone?: string | null;
     active?: boolean;
-    emailVerified?: Date | null;
   }
 }
 
@@ -65,6 +65,7 @@ export const authOptions: AuthOptions = {
             role: true,
             active: true,
             emailVerified: true,
+            phone: true,
           },
         });
 
@@ -90,6 +91,7 @@ export const authOptions: AuthOptions = {
           role: user.role,
           active: user.active,
           emailVerified: user.emailVerified,
+          phone: user.phone,
         };
       },
     }),
@@ -97,15 +99,14 @@ export const authOptions: AuthOptions = {
   callbacks: {
     async jwt({ token, user }) {
       if (user) {
-        console.log('JWT user:', user); // Debug log
         token.sub = user.id;
         token.role = user.role as Role; // Explicitly cast the role
         token.name = user.name;
         token.email = user.email;
         token.active = user.active;
-        token.emailVerified = user.emailVerified;
+        token.phone = user.phone;
       }
-      console.log('JWT token:', token); // Debug log
+
       return token;
     },
     async session({ session, token }) {
@@ -115,7 +116,6 @@ export const authOptions: AuthOptions = {
         session.user.name = token.name;
         session.user.email = token.email;
         session.user.active = token.active;
-        session.user.emailVerified = token.emailVerified;
       }
       return session;
     },
