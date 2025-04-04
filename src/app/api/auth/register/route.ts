@@ -41,7 +41,7 @@ async function handleInactiveUser(user: User, email: string, name: string) {
   );
 }
 
-async function createNewUser(email: string, password: string, name: string, role: Role, residentId: string) {
+async function createNewUser(email: string, password: string, name: string, role: Role, residentId: string, phone: string) {
   const hashedPassword = await getHashedPassword(password);
 
   const user = await prisma.user.create({
@@ -51,6 +51,7 @@ async function createNewUser(email: string, password: string, name: string, role
       password: hashedPassword,
       role,
       active: false,
+      phone,
       residents: {
         create: {
           residentId
@@ -68,12 +69,12 @@ async function createNewUser(email: string, password: string, name: string, role
 
 export async function POST(req: Request) {
   try {
-    const { email, password, name, role, unidad } = await req.json();
-    // const { email, password, name, role, unidad } = {email: 'fa.iverson@gmail.com', password: 'P@ssw0rd!!', name: 'Fabian Iverson', role: Role.LANDLORD, unidad: 'M31 L39'};
-    console.log('Registration data:', { email, name, role, unidad });
+    const { email, password, name, role, unidad, phone } = await req.json();
+    // const { email, password, name, role, unidad, phone } = {email: 'fa.iverson@gmail.com', password: 'P@ssw0rd!!', name: 'Fabian Iverson', role: Role.LANDLORD, unidad: 'M31 L39', phone: '+5411123456789'};
+    console.log('Registration data:', { email, name, role, unidad, phone });
 
     // Validate input
-    if (!email || !password || !name || !role || !unidad) {
+    if (!email || !password || !name || !role || !unidad || !phone) {
       return NextResponse.json(
         { message: 'Faltan campos requeridos' },
         { status: 400 }
@@ -115,7 +116,7 @@ export async function POST(req: Request) {
       );
     }
 
-    const user = await createNewUser(email, password, name, role, existingResident!.id);
+    const user = await createNewUser(email, password, name, role, existingResident!.id, phone);
 
     return NextResponse.json(
       {

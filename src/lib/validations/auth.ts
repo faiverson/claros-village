@@ -18,6 +18,9 @@ export const registerSchema = z.object({
   role: z.nativeEnum(Role),
   unidad: z.string()
     .min(1, { message: "Debe seleccionar una unidad" }),
+  phone: z.string()
+    .min(1, { message: "El teléfono es requerido" })
+    .regex(/^\+?[0-9]{10,15}$/, { message: "Formato de teléfono inválido. Debe contener entre 10 y 15 dígitos" }),
 }).refine((data) => data.password === data.confirmPassword, {
   message: "Las contraseñas no coinciden",
   path: ["confirmPassword"],

@@ -22,6 +22,7 @@ model User {
   active              Boolean          @default(false)
   avatar              String?
   role                Role             @default(RENTER)
+  phone               String?
   verificationToken   String?          @map("verification_token")
   verificationExpires DateTime?        @map("verification_expires")
   createdAt           DateTime         @default(now()) @map(name: "created_at")

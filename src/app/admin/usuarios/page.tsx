@@ -86,7 +86,7 @@ export default async function UsuariosPage() {
                 <TableCell>
                   <span
                     className={`inline-flex items-center gap-1 rounded-full px-2 py-1 text-xs font-medium ${
-                      user.active ? 'bg-green-100 text-green-700' : 'bg-red-100 text-red-700'
+                      user.active ? 'bg-green-100 text-green-700' : 'bg-red-100 text-destructive-700'
                     }`}
                   >
                     {user.active ? (
@@ -107,9 +107,9 @@ export default async function UsuariosPage() {
                     {user.emailVerified ? (
                       <CheckCircle2 className="h-4 w-4 text-green-500" />
                     ) : (
-                      <XCircle className="h-4 w-4 text-red-500" />
+                      <XCircle className="h-4 w-4 text-destructive-500" />
                     )}
-                    <span className={`text-sm ${user.emailVerified ? 'text-green-700' : 'text-red-700'}`}>
+                    <span className={`text-sm ${user.emailVerified ? 'text-green-700' : 'text-destructive-700'}`}>
                       {user.emailVerified ? 'Sí' : 'No'}
                     </span>
                   </span>

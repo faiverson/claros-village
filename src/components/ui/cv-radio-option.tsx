@@ -14,7 +14,7 @@ export const CVRadioOption = forwardRef<HTMLInputElement, CVRadioOptionProps>(({
         ref={ref as React.Ref<HTMLButtonElement>}
         value={value}
         id={id}
-        className="group-hover:bg-green-100 transition-colors"
+        className="group-hover:bg-green-100 transition-colors border-primary-500"
       />
       <label htmlFor={id} className="text-sm cursor-pointer">
         {label}

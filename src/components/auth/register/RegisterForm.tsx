@@ -2,53 +2,56 @@
 
 import { useState } from 'react'
 import Link from 'next/link'
-import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group'
 import { registerSchema, type RegisterInput } from '@/lib/validations/auth'
 import { zodResolver } from '@hookform/resolvers/zod'
-import { useForm } from 'react-hook-form'
+import { useForm, FormProvider } from 'react-hook-form'
 import { Role } from '@prisma/client'
-import dynamic from 'next/dynamic'
-import type { CSSObjectWithLabel, StylesConfig } from 'react-select'
 import { CVPassword } from '@/components/ui/cv-password'
 import { CVEmail } from '@/components/ui/cv-email'
+import { CVPhone } from '@/components/ui/cv-phone'
+import { CVInput } from '@/components/ui/cv-input'
+import { CVRadioGroup } from '@/components/ui/cv-radio-group'
+import { CVSelect } from '@/components/ui/cv-select'
 
-const Select = dynamic(() => import('react-select'), {
-  ssr: false,
-})
+const EMPTY_STRING = ''
 
 interface RegisterFormProps {
   units: string[]
 }
 
-interface UnitOption {
-  value: string
-  label: string
+const defaultValues: RegisterInput = {
+  role: Role.LANDLORD,
+  name: EMPTY_STRING,
+  email: EMPTY_STRING,
+  phone: EMPTY_STRING,
+  password: EMPTY_STRING,
+  confirmPassword: EMPTY_STRING,
+  unidad: EMPTY_STRING,
 }
 
 export function RegisterForm({ units }: RegisterFormProps) {
   const [error, setError] = useState<string | null>(null)
   const [loading, setLoading] = useState(false)
   const [success, setSuccess] = useState(false)
-  const [selectedRole, setSelectedRole] = useState<Role>(Role.LANDLORD)
+
+  const methods = useForm<RegisterInput>({
+    resolver: zodResolver(registerSchema),
+    defaultValues,
+  })
 
   const {
-    register,
     handleSubmit,
     formState: { errors },
     reset,
-    setValue,
-  } = useForm<RegisterInput>({
-    resolver: zodResolver(registerSchema),
-    defaultValues: {
-      role: Role.LANDLORD,
-    },
-  })
+    getValues,
+  } = methods
+
+  console.log(getValues())
 
   const resetForm = () => {
     setSuccess(false)
     setError(null)
     reset()
-    setSelectedRole(Role.LANDLORD)
   }
 
   const onSubmit = async (data: RegisterInput) => {
@@ -75,39 +78,6 @@ export function RegisterForm({ units }: RegisterFormProps) {
     } finally {
       setLoading(false)
     }
-  }
-
-  const unitOptions = units.map((unit) => ({
-    value: unit,
-    label: unit,
-  }))
-
-  const customStyles: StylesConfig<UnitOption> = {
-    control: (base: CSSObjectWithLabel) => ({
-      ...base,
-      minHeight: '42px',
-      borderRadius: '0.375rem',
-      borderColor: errors.unidad ? '#ef4444' : '#d1d5db',
-      '&:hover': {
-        borderColor: errors.unidad ? '#ef4444' : '#9ca3af',
-      },
-      '&:focus-within': {
-        borderColor: errors.unidad ? '#ef4444' : '#2563eb',
-        boxShadow: '0 0 0 1px #2563eb',
-      },
-    }),
-    menu: (base: CSSObjectWithLabel) => ({
-      ...base,
-      zIndex: 9999,
-    }),
-    option: (base: CSSObjectWithLabel, state: { isFocused: boolean }) => ({
-      ...base,
-      backgroundColor: state.isFocused ? '#f3f4f6' : 'white',
-      color: '#1f2937',
-      '&:hover': {
-        backgroundColor: '#f3f4f6',
-      },
-    }),
   }
 
   if (success) {
@@ -168,112 +138,91 @@ export function RegisterForm({ units }: RegisterFormProps) {
             </Link>
           </p>
         </div>
-        <form className="mt-8 space-y-6" onSubmit={handleSubmit(onSubmit)}>
-          <div className="space-y-4">
-            <div>
-              <label htmlFor="name" className="sr-only">
-                Nombre completo
-              </label>
-              <input
-                id="name"
-                {...register('name')}
-                type="text"
-                className="appearance-none rounded-md relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 focus:outline-none focus:ring-primary focus:border-primary focus:z-10 sm:text-sm"
-                placeholder="Nombre completo"
-              />
-              {errors.name && <p className="mt-1 text-xs text-red-500">{errors.name.message}</p>}
+        <FormProvider {...methods}>
+          <form className="mt-8 space-y-6" onSubmit={handleSubmit(onSubmit)}>
+            <div className="space-y-4">
+              <div>
+                <CVInput
+                  id="name"
+                  name="name"
+                  type="text"
+                  placeholder="Escribi tu nombre"
+                  error={errors.name?.message}
+                  label="Nombre completo"
+                />
+              </div>
+              <div>
+                <CVPhone id="phone" name="phone" placeholder="Teléfono" error={errors.phone?.message} label="Teléfono" />
+              </div>
+              <div>
+                <CVEmail
+                  id="email"
+                  name="email"
+                  autoComplete="email"
+                  placeholder="Escribi tu correo"
+                  error={errors.email?.message}
+                  label="Correo electrónico"
+                />
+              </div>
+              <div>
+                <CVPassword
+                  id="password"
+                  name="password"
+                  autoComplete="new-password"
+                  placeholder="Contraseña"
+                  error={errors.password?.message}
+                  label="Contraseña"
+                />
+              </div>
+              <div>
+                <CVPassword
+                  id="confirmPassword"
+                  name="confirmPassword"
+                  autoComplete="new-password"
+                  placeholder="Confirmar contraseña"
+                  error={errors.confirmPassword?.message}
+                  label="Confirmar contraseña"
+                />
+              </div>
+              <div>
+                <CVSelect
+                  id="unidad"
+                  name="unidad"
+                  options={units.map((unit) => ({
+                    value: unit,
+                    label: unit,
+                  }))}
+                  placeholder="Seleccionar Unidad"
+                  error={errors.unidad?.message}
+                  label="Unidad"
+                />
+              </div>
+              <div className="mt-4">
+                <CVRadioGroup
+                  id="role"
+                  name="role"
+                  className="flex flex-row space-x-4"
+                  options={[
+                    { id: 'renter', value: Role.RENTER, label: 'Inquilino' },
+                    { id: 'landlord', value: Role.LANDLORD, label: 'Propietario' },
+                  ]}
+                />
+              </div>
             </div>
+
+            {error && <div className="text-destructive-500 text-sm text-center">{error}</div>}
+
             <div>
-              <CVEmail
-                id="email"
-                {...register('email')}
-                autoComplete="email"
-                placeholder="Correo electrónico"
-                error={errors.email?.message}
-                label="Correo electrónico"
-              />
-            </div>
-            <div>
-              <CVPassword
-                id="password"
-                {...register('password')}
-                autoComplete="new-password"
-                placeholder="Contraseña"
-                error={errors.password?.message}
-                label="Contraseña"
-              />
-            </div>
-            <div>
-              <CVPassword
-                id="confirmPassword"
-                {...register('confirmPassword')}
-                autoComplete="new-password"
-                placeholder="Confirmar contraseña"
-                error={errors.confirmPassword?.message}
-                label="Confirmar contraseña"
-              />
-            </div>
-            <div>
-              <label htmlFor="unidad" className="sr-only">
-                Unidad
-              </label>
-              <Select
-                id="unidad"
-                options={unitOptions}
-                onChange={(option: unknown) => setValue('unidad', (option as UnitOption)?.value || '')}
-                placeholder="Seleccionar Unidad"
-                styles={customStyles as StylesConfig}
-                isClearable
-                isSearchable
-                noOptionsMessage={() => 'No hay unidades disponibles'}
-                className="react-select-container"
-                classNamePrefix="react-select"
-              />
-              {errors.unidad && <p className="mt-1 text-xs text-red-500">{errors.unidad.message}</p>}
-            </div>
-            <div className="mt-4">
-              <RadioGroup
-                value={selectedRole}
-                onValueChange={(value) => {
-                  setSelectedRole(value as Role)
-                  setValue('role', value as Role)
-                }}
-                className="flex flex-row space-x-4"
+              <button
+                type="submit"
+                disabled={loading}
+                className="group relative w-full flex justify-center py-2 px-4 border border-transparent text-sm font-medium rounded-md text-white bg-primary-500 hover:bg-primary-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary-500 disabled:opacity-50 disabled:cursor-not-allowed"
               >
-                <div className="flex items-center space-x-2">
-                  <RadioGroupItem value={Role.RENTER} id="renter" />
-                  <label
-                    htmlFor="renter"
-                    className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
-                  >
-                    Inquilino
-                  </label>
-                </div>
-                <div className="flex items-center space-x-2">
-                  <RadioGroupItem value={Role.LANDLORD} id="landlord" />
-                  <label
-                    htmlFor="landlord"
-                    className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
-                  >
-                    Propietario
-                  </label>
-                </div>
-              </RadioGroup>
+                {loading ? 'Creando cuenta...' : 'Crear cuenta'}
+              </button>
             </div>
-          </div>
-
-          {error && <div className="text-red-500 text-sm text-center">{error}</div>}
-
-          <div>
-            <button
-              type="submit"
-              disabled={loading}
-              className="group relative w-full flex justify-center py-2 px-4 border border-transparent text-sm font-medium rounded-md text-white bg-primary-500 hover:bg-primary-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary-500 disabled:opacity-50 disabled:cursor-not-allowed"
-            >
-              {loading ? 'Creando cuenta...' : 'Crear cuenta'}
-            </button>
-          </div>
-        </form>
+          </form>
+        </FormProvider>
       </div>
     </div>
   )
