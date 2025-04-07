@@ -1,48 +1,36 @@
 import { NextResponse } from 'next/server';
-import { prisma } from '@/lib/prisma';
 import { getServerSession } from 'next-auth';
 import { authOptions } from '@/app/api/auth/[...nextauth]/route';
-import { getHashedPassword } from '@/lib/utils/password';
+import prisma from '@/lib/prisma';
 import { Role } from '@prisma/client';
+import { getHashedPassword } from '@/lib/utils/password';
 
 export async function GET() {
   try {
+    const session = await getServerSession(authOptions);
+
+    if (!session) {
+      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+    }
+
+    if (session.user.role !== Role.ADMIN) {
+      return NextResponse.json({ error: 'Forbidden' }, { status: 403 });
+    }
+
     const users = await prisma.user.findMany({
       select: {
         id: true,
         name: true,
-        email: true,
-        role: true,
-        active: true,
-        emailVerified: true,
-        phone: true,
-        residents: {
-          select: {
-            resident: {
-              select: {
-                unidad: true
-              }
-            }
-          }
-        }
       },
       orderBy: {
-        createdAt: 'desc',
+        name: 'asc',
       },
     });
 
-    const transformedUsers = users.map(user => {
-      const resident = user.residents?.[0]?.resident;
-      return {
-        ...user,
-        unidad: resident?.unidad || null,
-      };
-    });
-
-    return NextResponse.json(transformedUsers || []);
+    return NextResponse.json(users);
   } catch (error) {
     console.error('Error fetching users:', error);
-    return NextResponse.json([], { status: 500 });
+    return NextResponse.json({ error: 'Internal Server Error' }, { status: 500 });
   }
 }
 

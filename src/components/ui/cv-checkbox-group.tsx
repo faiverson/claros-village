@@ -1,34 +1,52 @@
-import React from 'react'
-import { UseFormRegisterReturn } from 'react-hook-form'
-import { type CVCheckboxOptionProps } from '@/components/ui/cv-checkbox-option'
+'use client'
 
-interface CVCheckboxGroupProps<T extends string> {
-  children: React.ReactNode
-  className?: string
-  register: UseFormRegisterReturn
-  value?: T[]
-  onValueChange: (value: T[]) => void
+import React from 'react'
+import { Controller, useFormContext } from 'react-hook-form'
+import { CVCheckboxOption } from '@/components/ui/cv-checkbox-option'
+import { cn } from '@/lib/utils'
+
+interface CheckboxOption {
+  id: string
+  value: string
+  label: string
 }
 
-export function CVCheckboxGroup<T extends string>({ children, className, register, value = [], onValueChange }: CVCheckboxGroupProps<T>) {
-  const handleChange = (val: T, checked: boolean) => {
-    const newValue = checked ? [...value, val] : value.filter((v) => v !== val)
+interface CVCheckboxGroupProps {
+  className?: string
+  name: string
+  options: CheckboxOption[]
+}
 
-    onValueChange(newValue)
-    register.onChange({ target: { value: newValue, name: register.name } })
-  }
+export function CVCheckboxGroup<T extends string = string>({ className, name, options }: CVCheckboxGroupProps) {
+  const { control } = useFormContext()
 
   return (
-    <div className={className} role="group">
-      {React.Children.map(children, (child) => {
-        if (!React.isValidElement(child)) return child
+    <Controller
+      name={name}
+      control={control}
+      render={({ field }) => {
+        const handleChange = (val: T, checked: boolean) => {
+          const currentValue = field.value || []
+          const newValue = checked ? [...currentValue, val] : currentValue.filter((v: T) => v !== val)
 
-        const childProps = child.props as CVCheckboxOptionProps
-        return React.cloneElement(child as React.ReactElement<CVCheckboxOptionProps>, {
-          onCheckedChange: (checked: boolean) => handleChange(childProps.value as T, checked),
-          checked: value.includes(childProps.value as T),
-        })
-      })}
-    </div>
+          field.onChange(newValue)
+        }
+
+        return (
+          <div className={cn('flex flex-wrap gap-4', className)} role="group" id={name} aria-label={name}>
+            {options.map((option) => (
+              <CVCheckboxOption
+                key={option.id}
+                id={option.id}
+                value={option.value}
+                label={option.label}
+                checked={Array.isArray(field.value) && field.value.includes(option.value as unknown as T)}
+                onCheckedChange={(checked) => handleChange(option.value as unknown as T, checked)}
+              />
+            ))}
+          </div>
+        )
+      }}
+    />
   )
 }

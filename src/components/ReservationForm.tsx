@@ -1,53 +1,71 @@
 'use client'
 
 import { useRouter } from 'next/navigation'
-import { useForm } from 'react-hook-form'
+import { useForm, FormProvider } from 'react-hook-form'
 import { Amenity, SumShift, SumRoom } from '@/types/enums'
-import { Textarea } from '@/components/ui/textarea'
-import { CVRadioOption } from '@/components/ui/cv-radio-option'
-import { CVCheckboxOption } from '@/components/ui/cv-checkbox-option'
+import { CVTextArea } from '@/components/ui/cv-textarea'
 import { CVCalendar } from '@/components/ui/cv-calendar'
 import { CVRadioGroup } from '@/components/ui/cv-radio-group'
 import { CVCheckboxGroup } from '@/components/ui/cv-checkbox-group'
 import { addReservation } from '@/app/actions/reservation'
 import { toast } from 'sonner'
 import { SumReservation } from '@prisma/client'
-
-interface ReservationFormData {
-  amenity: Amenity
-  shift: SumShift
-  rooms: SumRoom[]
-  date_at: Date
-  observation?: string
-}
+import { zodResolver } from '@hookform/resolvers/zod'
+import { ReservationFormSchema, type ReservationFormType } from '@/app/schemas/reservation'
+import { CVSelect } from '@/components/ui/cv-select'
+import { useSession } from 'next-auth/react'
+import { Role } from '@prisma/client'
+import { FormLayout } from '@/components/layouts/FormLayout'
 
 interface ReservationFormProps {
   existingReservations: SumReservation[]
+  users: Array<{ id: string; name: string | null; unidad: string | null }>
 }
 
-const defaultValues: Partial<ReservationFormData> = {
+const defaultValues: Partial<ReservationFormType> = {
   amenity: Amenity.Sum,
   rooms: [],
   observation: '',
   date_at: undefined,
 }
 
-export default function ReservationForm({ existingReservations }: ReservationFormProps) {
+const amenityOptions = [
+  { id: Amenity.Sum, value: Amenity.Sum, label: 'SUM' },
+  { id: Amenity.Gym, value: Amenity.Gym, label: 'Gimnasio' },
+  { id: Amenity.Soccer, value: Amenity.Soccer, label: 'Canchas de Fútbol' },
+]
+
+const shiftOptions = [
+  { id: SumShift.Day, value: SumShift.Day, label: 'Diurno' },
+  { id: SumShift.Night, value: SumShift.Night, label: 'Noche' },
+  { id: SumShift.Both, value: SumShift.Both, label: 'Ambos' },
+]
+
+const roomOptions = [
+  { id: SumRoom.Small, value: SumRoom.Small, label: 'Salón Chico' },
+  { id: SumRoom.Big, value: SumRoom.Big, label: 'Salón Grande' },
+]
+
+export default function ReservationForm({ existingReservations, users }: ReservationFormProps) {
   const router = useRouter()
-  const {
-    register,
-    handleSubmit,
-    watch,
-    setValue,
-    reset,
-    formState: { errors },
-  } = useForm<ReservationFormData>({
-    defaultValues,
+  const { data: session } = useSession()
+  const isAdmin = session?.user?.role === Role.ADMIN
+
+  const methods = useForm<ReservationFormType>({
+    defaultValues: {
+      ...defaultValues,
+      userId: isAdmin ? undefined : session?.user?.id,
+    },
+    resolver: zodResolver(ReservationFormSchema(session?.user?.role)),
   })
 
-  console.log('existingReservations', existingReservations)
+  const {
+    handleSubmit,
+    formState: { errors },
+    watch,
+  } = methods
 
-  const { amenity, shift, rooms, date_at } = watch()
+  const { amenity, shift, rooms } = watch()
 
   const isDateDisabled = (date: Date) => {
     if (!shift || !rooms?.length) return false
@@ -79,7 +97,12 @@ export default function ReservationForm({ existingReservations }: ReservationFor
     })
   }
 
-  const onSubmit = async (data: ReservationFormData) => {
+  const onSubmit = async (data: ReservationFormType) => {
+    if (isAdmin && !data.userId) {
+      toast.error('Debe seleccionar un usuario')
+      return
+    }
+
     const loadingToast = toast.loading('Procesando tu reserva...')
 
     try {
@@ -127,7 +150,7 @@ export default function ReservationForm({ existingReservations }: ReservationFor
         description: 'Tu reserva ha sido registrada correctamente.',
       })
 
-      reset(defaultValues)
+      methods.reset(defaultValues)
       router.refresh()
     } catch {
       toast.dismiss(loadingToast)
@@ -138,79 +161,65 @@ export default function ReservationForm({ existingReservations }: ReservationFor
   }
 
   return (
-    <form onSubmit={handleSubmit(onSubmit)} className="space-y-6" noValidate>
-      <div className="space-y-2">
-        <label className="text-sm font-medium">Espacios</label>
-        <CVRadioGroup
-          className="flex gap-4"
-          register={register('amenity', {
-            required: `Debe seleccionar un espacio (current: ${amenity || 'none'})`,
-          })}
-          value={amenity}
-        >
-          <CVRadioOption id={Amenity.Sum} value={Amenity.Sum} label="SUM" />
-          <CVRadioOption id={Amenity.Gym} value={Amenity.Gym} label="Gimnasio" />
-          <CVRadioOption id={Amenity.Soccer} value={Amenity.Soccer} label="Canchas de Fútbol" />
-        </CVRadioGroup>
-        {errors.amenity && <p className="text-sm text-destructive-500">{errors.amenity.message}</p>}
-      </div>
-      {amenity === Amenity.Sum && (
-        <>
-          <div className="space-y-2">
-            <label className="text-sm font-medium">Turno</label>
-            <CVRadioGroup className="flex gap-4" register={register('shift', { required: 'Debe seleccionar un turno' })} value={shift}>
-              <CVRadioOption id={SumShift.Day} value={SumShift.Day} label="Diurno" />
-              <CVRadioOption id={SumShift.Night} value={SumShift.Night} label="Noche" />
-              <CVRadioOption id={SumShift.Both} value={SumShift.Both} label="Ambos" />
-            </CVRadioGroup>
-            {errors.shift && <p className="text-sm text-destructive-500">{errors.shift.message}</p>}
-          </div>
-          <div className="space-y-2">
-            <label className="text-sm font-medium">Salones</label>
-            <CVCheckboxGroup
-              className="flex gap-4"
-              register={register('rooms', {
-                required: 'Debe seleccionar al menos un salón',
-                validate: (value) => (value?.length ?? 0) > 0 || 'Debe seleccionar al menos un salón',
-              })}
-              value={rooms}
-              onValueChange={(newRooms) => setValue('rooms', newRooms, { shouldValidate: true })}
-            >
-              <CVCheckboxOption id={SumRoom.Small} value={SumRoom.Small} label="Salón Chico" />
-              <CVCheckboxOption id={SumRoom.Big} value={SumRoom.Big} label="Salón Grande" />
-            </CVCheckboxGroup>
-            {errors.rooms && <p className="text-sm text-destructive-500">{errors.rooms.message}</p>}
-          </div>
-          <div className="space-y-2">
-            <label className="text-sm font-medium">Calendario</label>
-            <div className="flex justify-center md:justify-start">
-              <CVCalendar
-                selected={date_at}
-                onSelect={(date) => {
-                  if (date) {
-                    setValue('date_at', date, {
-                      shouldValidate: true,
-                    })
-                  }
-                }}
-                disabled={!shift || !rooms?.length || isDateDisabled}
-                {...register('date_at', {
-                  required: 'Debe seleccionar una fecha',
-                })}
+    <FormProvider {...methods}>
+      <FormLayout>
+        <form onSubmit={handleSubmit(onSubmit)} className="space-y-6" noValidate>
+          {isAdmin && (
+            <div className="space-y-2">
+              <label htmlFor="userId" className="text-sm font-medium">
+                Usuario
+              </label>
+              <CVSelect
+                id="userId"
+                name="userId"
+                options={users.map((user) => ({
+                  value: user.id,
+                  label: user.name ? `${user.name}${user.unidad ? ` (${user.unidad})` : ''}` : 'Usuario sin nombre',
+                }))}
+                placeholder="Seleccionar usuario"
+                error={errors.userId?.message}
               />
             </div>
-            {errors.date_at && <p className="text-sm text-destructive-500">{errors.date_at.message}</p>}
-          </div>
+          )}
           <div className="space-y-2">
-            <label className="text-sm font-medium">Observaciones</label>
-            <Textarea {...register('observation')} placeholder="Ingrese sus observaciones aquí..." className="min-h-[100px]" />
-            {errors.observation && <p className="text-sm text-destructive-500">{errors.observation.message}</p>}
+            <label htmlFor="amenity" className="text-sm font-medium">
+              Espacios
+            </label>
+            <CVRadioGroup id="amenity" className="flex gap-4" name="amenity" options={amenityOptions} />
+            {errors.amenity && <p className="text-sm text-destructive-500">{errors.amenity.message}</p>}
           </div>
-        </>
-      )}
-      <button type="submit" className="bg-primary text-white py-2 px-4 rounded-md hover:bg-primary-600 transition-colors">
-        Reservar
-      </button>
-    </form>
+          {amenity === Amenity.Sum && (
+            <>
+              <div className="space-y-2">
+                <label htmlFor="shift" className="text-sm font-medium">
+                  Turno
+                </label>
+                <CVRadioGroup id="shift" className="flex gap-4" name="shift" options={shiftOptions} />
+                {errors.shift && <p className="text-sm text-destructive-500">{errors.shift.message}</p>}
+              </div>
+              <div className="space-y-2">
+                <label htmlFor="rooms" className="text-sm font-medium">
+                  Salones
+                </label>
+                <CVCheckboxGroup name="rooms" options={roomOptions} />
+                {errors.rooms && <p className="text-sm text-destructive-500">{errors.rooms.message}</p>}
+              </div>
+              <div className="space-y-2">
+                <label className="text-sm font-medium">Calendario</label>
+                <CVCalendar name="date_at" disabled={!shift || !rooms?.length || isDateDisabled} />
+                {errors.date_at && <p className="text-sm text-destructive-500">{errors.date_at.message}</p>}
+              </div>
+              <div className="space-y-2">
+                <CVTextArea name="observation" placeholder="Ingrese sus observaciones aquí..." label="Observaciones" />
+                {errors.observation && <p className="text-sm text-destructive-500">{errors.observation.message}</p>}
+              </div>
+            </>
+          )}
+          <button type="submit" className="bg-primary text-white py-2 px-4 rounded-md hover:bg-primary-600 transition-colors">
+            Reservar
+          </button>
+        </form>
+      </FormLayout>
+    </FormProvider>
   )
 }

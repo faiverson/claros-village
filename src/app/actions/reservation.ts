@@ -9,9 +9,16 @@ import prisma from '@/lib/prisma';
 export async function addReservation(data: ReservationSchemaType) {
   const session = await getServerSession(authOptions);
   const userId = session?.user?.id;
+  const userRole = session?.user?.role;
 
   if (!userId) {
     return { error: true, key: 'invalid_session' };
+  }
+
+  // If user is not admin and trying to create a reservation for themselves,
+  // check if they are RENTER or LANDLORD
+  if (!data.userId && userRole && userRole !== 'RENTER' && userRole !== 'LANDLORD') {
+    return { error: true, key: 'invalid_role' };
   }
 
   const validatedFields = ReservationDBSchema.safeParse(data);
@@ -30,7 +37,7 @@ export async function addReservation(data: ReservationSchemaType) {
         dateAt: new Date(date_at),
         observation,
         rooms,
-        userId,
+        userId: data.userId || userId,
       };
 
       const existReservation = await getExistSumReservation(sumData);
@@ -188,23 +195,12 @@ export async function deleteReservation(id: string) {
 }
 
 export async function getReservationsFromToday() {
-  const session = await getServerSession(authOptions);
-
-  if (!session?.user?.id) {
-    return {
-      error: true,
-      key: 'invalid_session',
-      message: 'Invalid session'
-    };
-  }
-
   try {
     const today = new Date();
     today.setHours(0, 0, 0, 0);
 
     const reservations = await prisma.sumReservation.findMany({
       where: {
-        userId: session.user.id,
         dateAt: {
           gte: today
         }

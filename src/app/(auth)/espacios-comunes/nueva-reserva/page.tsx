@@ -1,8 +1,9 @@
 import ReservationForm from '@/components/ReservationForm'
-import { getReservations } from '@/app/actions/reservation'
+import { getReservationsFromToday } from '@/app/actions/reservation'
+import { getResidentUsers } from '@/app/actions/user'
 
 export default async function NewReservationPage() {
-  const result = await getReservations()
+  const [reservationsResult, usersResult] = await Promise.all([getReservationsFromToday(), getResidentUsers()])
 
-  return <ReservationForm existingReservations={result.data || []} />
+  return <ReservationForm existingReservations={reservationsResult.data || []} users={usersResult.data || []} />
 }
