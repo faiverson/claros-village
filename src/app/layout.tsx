@@ -24,7 +24,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
     <html lang="es">
       <body className={`${geistSans.variable} ${geistMono.variable} antialiased bg-background text-foreground`}>
         <Providers>{children}</Providers>
-        <Toaster duration={5000} closeButton richColors position="top-center" />
+        <Toaster richColors position="top-right" />
       </body>
     </html>
   )
