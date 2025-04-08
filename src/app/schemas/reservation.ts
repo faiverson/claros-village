@@ -1,5 +1,5 @@
 import { z } from 'zod';
-import { Amenity, SumShift, SumRoom } from '@/types/enums';
+import { Amenity, SumShift, SumRoom } from '@/utils/enums';
 import { Role } from '@prisma/client';
 
 export const ReservationFormSchema = (role?: Role) => z.object({

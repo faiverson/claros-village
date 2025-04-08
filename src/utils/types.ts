@@ -6,25 +6,6 @@ export interface User {
     role?: string
 }
 
-export enum SumShift {
-    Morning = 'MORNING',
-    Afternoon = 'AFTERNOON',
-    Evening = 'EVENING',
-}
-
-export enum Amenity {
-    Sum = 'SUM',
-    Pool = 'POOL',
-    Tennis = 'TENNIS',
-    Gym = 'GYM',
-}
-
-export enum SumRoom {
-    Main = 'MAIN',
-    Secondary = 'SECONDARY',
-    Outdoor = 'OUTDOOR',
-}
-
 export type AlertType = 'error' | 'success' | 'warning' | 'info'
 
 export type ReservationStatus = 'PENDING' | 'APPROVED' | 'REJECTED' | 'CANCELLED';

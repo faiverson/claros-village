@@ -2,19 +2,19 @@
 
 import { useRouter } from 'next/navigation'
 import { useForm, FormProvider } from 'react-hook-form'
-import { Amenity, SumShift, SumRoom } from '@/types/enums'
+import { Amenity, SumShift, SumRoom } from '@/utils/enums'
 import { CVTextArea } from '@/components/ui/cv-textarea'
 import { CVCalendar } from '@/components/ui/cv-calendar'
 import { CVRadioGroup } from '@/components/ui/cv-radio-group'
 import { CVCheckboxGroup } from '@/components/ui/cv-checkbox-group'
 import { addReservation } from '@/app/actions/reservation'
 import { toast } from 'sonner'
-import { SumReservation } from '@prisma/client'
+import { Role, SumReservation } from '@prisma/client'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { ReservationFormSchema, type ReservationFormType } from '@/app/schemas/reservation'
 import { CVSelect } from '@/components/ui/cv-select'
 import { useSession } from 'next-auth/react'
-import { Role } from '@prisma/client'
+import { usePermission } from '@/hooks/usePermission'
 import { FormLayout } from '@/components/layouts/FormLayout'
 
 interface ReservationFormProps {
@@ -49,12 +49,13 @@ const roomOptions = [
 export default function ReservationForm({ existingReservations, users }: ReservationFormProps) {
   const router = useRouter()
   const { data: session } = useSession()
-  const isAdmin = session?.user?.role === Role.ADMIN
+  const { hasPermission } = usePermission([Role.ADMIN, Role.MANAGER])
+  const canCreateSumReservation = hasPermission()
 
   const methods = useForm<ReservationFormType>({
     defaultValues: {
       ...defaultValues,
-      userId: isAdmin ? undefined : session?.user?.id,
+      userId: canCreateSumReservation ? undefined : session?.user?.id,
     },
     resolver: zodResolver(ReservationFormSchema(session?.user?.role)),
   })
@@ -98,7 +99,7 @@ export default function ReservationForm({ existingReservations, users }: Reserva
   }
 
   const onSubmit = async (data: ReservationFormType) => {
-    if (isAdmin && !data.userId) {
+    if (canCreateSumReservation && !data.userId) {
       toast.error('Debe seleccionar un usuario')
       return
     }
@@ -164,7 +165,7 @@ export default function ReservationForm({ existingReservations, users }: Reserva
     <FormProvider {...methods}>
       <FormLayout>
         <form onSubmit={handleSubmit(onSubmit)} className="space-y-6" noValidate>
-          {isAdmin && (
+          {canCreateSumReservation && (
             <div className="space-y-2">
               <label htmlFor="userId" className="text-sm font-medium">
                 Usuario

@@ -8,14 +8,15 @@ import { Session } from 'next-auth'
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
 import Link from 'next/link'
 import { Role } from '@prisma/client'
+import { usePermission } from '@/hooks/usePermission'
 
 interface UserDropdownMenuProps {
   user: Session['user']
 }
 
 export function UserDropdownMenu({ user }: UserDropdownMenuProps) {
-  const allowedRoles = [Role.ADMIN, Role.MANAGER, Role.GUARD] as const
-  const canAccessUsers = allowedRoles.includes(user.role as (typeof allowedRoles)[number])
+  const { hasPermission } = usePermission([Role.ADMIN, Role.MANAGER] as const)
+  const canAccessUsers = hasPermission()
 
   const handleSignOut = () => {
     signOut({ callbackUrl: '/' })

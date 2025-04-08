@@ -2,8 +2,9 @@
 
 import { forwardRef } from 'react'
 import dynamic from 'next/dynamic'
-import type { CSSObjectWithLabel, StylesConfig, SingleValue, GroupBase, SelectInstance } from 'react-select'
+import type { CSSObjectWithLabel, StylesConfig, MultiValue, GroupBase, SelectInstance } from 'react-select'
 import { Controller, useFormContext } from 'react-hook-form'
+import { Check } from 'lucide-react'
 import { Variant } from '@/utils/enums'
 
 const Select = dynamic(() => import('react-select'), {
@@ -15,7 +16,7 @@ interface Option {
   label: string
 }
 
-interface CVSelectProps {
+interface CVMultiSelectProps {
   id: string
   name: string
   options: Option[]
@@ -25,26 +26,10 @@ interface CVSelectProps {
   isClearable?: boolean
   isSearchable?: boolean
   variant?: Variant
-  height?: string
 }
 
-export const CVSelect = forwardRef<SelectInstance<Option, false, GroupBase<Option>>, CVSelectProps>(
-  (
-    {
-      id,
-      name,
-      options,
-      placeholder,
-      error,
-      label,
-      isClearable = true,
-      isSearchable = true,
-      variant = Variant.PRIMARY,
-      height = '38px',
-      ...props
-    },
-    ref
-  ) => {
+export const CVMultiSelect = forwardRef<SelectInstance<Option, true, GroupBase<Option>>, CVMultiSelectProps>(
+  ({ id, name, options, placeholder, error, label, isClearable = true, isSearchable = true, variant = Variant.PRIMARY, ...props }, ref) => {
     const { control } = useFormContext()
     const currentVariant = error ? Variant.ERROR : variant
 
@@ -64,14 +49,15 @@ export const CVSelect = forwardRef<SelectInstance<Option, false, GroupBase<Optio
               name={field.name}
               ref={ref}
               options={options}
-              value={options.find((option) => option.value === field.value)}
-              onChange={(newValue: SingleValue<Option>) => {
-                field.onChange(newValue?.value || '')
+              value={options.filter((option) => field.value?.includes(option.value))}
+              onChange={(newValue: MultiValue<Option>) => {
+                field.onChange(newValue.map((option) => option.value))
               }}
               onBlur={field.onBlur}
               placeholder={placeholder}
               isClearable={isClearable}
               isSearchable={isSearchable}
+              isMulti
               className="react-select-container"
               classNamePrefix="react-select"
               {...props}
@@ -79,8 +65,7 @@ export const CVSelect = forwardRef<SelectInstance<Option, false, GroupBase<Optio
                 {
                   control: (base: CSSObjectWithLabel) => ({
                     ...base,
-                    minHeight: height,
-                    height: height,
+                    minHeight: '38px',
                     borderRadius: '0.375rem',
                     borderColor: error ? 'var(--color-destructive)' : '#d1d5db',
                     '&:hover': {
@@ -97,16 +82,52 @@ export const CVSelect = forwardRef<SelectInstance<Option, false, GroupBase<Optio
                     ...base,
                     zIndex: 9999,
                   }),
-                  option: (base: CSSObjectWithLabel, state: { isFocused: boolean }) => ({
+                  option: (base: CSSObjectWithLabel, state: { isSelected: boolean; isFocused: boolean }) => ({
                     ...base,
                     backgroundColor: state.isFocused ? '#f3f4f6' : 'white',
                     color: '#1f2937',
+                    display: 'flex',
+                    alignItems: 'center',
+                    gap: '0.5rem',
                     '&:hover': {
                       backgroundColor: '#f3f4f6',
                     },
                   }),
+                  multiValue: (base: CSSObjectWithLabel) => ({
+                    ...base,
+                    backgroundColor: `var(--color-${currentVariant}-100)`,
+                    color: `var(--color-${currentVariant}-700)`,
+                    borderRadius: '0.25rem',
+                  }),
+                  multiValueLabel: (base: CSSObjectWithLabel) => ({
+                    ...base,
+                    color: `var(--color-${currentVariant}-700)`,
+                    padding: '0.25rem 0.5rem',
+                  }),
+                  multiValueRemove: (base: CSSObjectWithLabel) => ({
+                    ...base,
+                    color: `var(--color-${currentVariant}-700)`,
+                    '&:hover': {
+                      backgroundColor: `var(--color-${currentVariant}-200)`,
+                      color: `var(--color-${currentVariant}-800)`,
+                    },
+                  }),
                 } satisfies StylesConfig
               }
+              components={{
+                Option: ({ children, isSelected, ...props }: { children: React.ReactNode; isSelected: boolean; [key: string]: any }) => (
+                  <div {...props}>
+                    <div className="flex items-center gap-2">
+                      <div
+                        className={`w-4 h-4 border rounded flex items-center justify-center ${isSelected ? `bg-${currentVariant}-500 border-${currentVariant}-500` : 'border-gray-300'}`}
+                      >
+                        {isSelected && <Check className="w-3 h-3 text-white" />}
+                      </div>
+                      {children}
+                    </div>
+                  </div>
+                ),
+              }}
             />
             {error && <p className="mt-1 text-xs text-destructive">{error}</p>}
           </div>
@@ -116,4 +137,4 @@ export const CVSelect = forwardRef<SelectInstance<Option, false, GroupBase<Optio
   }
 )
 
-CVSelect.displayName = 'CVSelect'
+CVMultiSelect.displayName = 'CVMultiSelect'

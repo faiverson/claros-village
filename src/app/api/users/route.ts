@@ -6,8 +6,10 @@ import { Role } from '@prisma/client';
 import { getHashedPassword } from '@/lib/utils/password';
 
 export async function GET() {
+
   try {
     const session = await getServerSession(authOptions);
+    console.log('GET users',session)
 
     if (!session) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
@@ -18,15 +20,12 @@ export async function GET() {
     }
 
     const users = await prisma.user.findMany({
-      select: {
-        id: true,
-        name: true,
-      },
+
       orderBy: {
         name: 'asc',
       },
     });
-
+    console.log('admin users', users)
     return NextResponse.json(users);
   } catch (error) {
     console.error('Error fetching users:', error);

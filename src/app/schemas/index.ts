@@ -1,4 +1,4 @@
-import { Amenity, SumRoom, SumShift } from '@/utils/types'
+import { Amenity, SumRoom, SumShift } from '@/utils/enums'
 import { Role } from '@prisma/client'
 import type { DateValue } from '@react-types/calendar'
 import * as z from 'zod'

@@ -14,8 +14,11 @@ import { CVPhone } from '@/components/ui/cv-phone'
 import { Role } from '@prisma/client'
 import Link from 'next/link'
 import { ArrowLeft } from 'lucide-react'
+import { roleOptions } from '@/lib/dropdownOptions'
+import { toast } from 'sonner'
 
 const userSchema = z.object({
+  id: z.string(),
   name: z.string().min(1, 'El nombre es requerido'),
   email: z.string().email('Email inválido'),
   phone: z.string().optional(),
@@ -26,25 +29,17 @@ const userSchema = z.object({
 
 type UserInput = z.infer<typeof userSchema>
 
-const roleOptions = [
-  { value: Role.LANDLORD, label: 'Propietario' },
-  { value: Role.RENTER, label: 'Inquilino' },
-  { value: Role.GUARD, label: 'Guardia' },
-  { value: Role.MANAGER, label: 'Gestor' },
-  { value: Role.ADMIN, label: 'Administrador' },
-]
-
 interface UserFormProps {
   units: string[]
   initialData?: Partial<UserInput>
-  isEdit?: boolean
-  userId?: string
 }
 
-export function UserForm({ units, initialData, isEdit = false, userId }: UserFormProps) {
+export function UserForm({ units, initialData }: UserFormProps) {
   const router = useRouter()
   const [error, setError] = useState<string | null>(null)
   const [loading, setLoading] = useState(false)
+
+  const isEdit = !!initialData?.id
 
   const methods = useForm<UserInput>({
     resolver: zodResolver(userSchema),
@@ -67,7 +62,7 @@ export function UserForm({ units, initialData, isEdit = false, userId }: UserFor
       setError(null)
       setLoading(true)
 
-      const url = isEdit ? `/api/users/${userId}` : '/api/users'
+      const url = isEdit ? `/api/users/${initialData?.id}` : '/api/users'
       const method = isEdit ? 'PUT' : 'POST'
 
       const response = await fetch(url, {
@@ -83,10 +78,18 @@ export function UserForm({ units, initialData, isEdit = false, userId }: UserFor
         throw new Error(error.message || `Error al ${isEdit ? 'actualizar' : 'crear'} el usuario`)
       }
 
+      toast.success(isEdit ? 'Usuario modificado' : 'Usuario creado', {
+        description: isEdit ? 'El usuario ha sido modificado correctamente' : 'El usuario ha sido creado correctamente',
+      })
+
       router.push('/admin/usuarios')
       router.refresh()
     } catch (error) {
-      setError(error instanceof Error ? error.message : `Error al ${isEdit ? 'actualizar' : 'crear'} el usuario`)
+      const errMessage = error instanceof Error ? error.message : `Error al ${isEdit ? 'modificar' : 'crear'} el usuario`
+      setError(errMessage)
+      toast.error(errMessage, {
+        description: error instanceof Error ? error.message : 'Ha ocurrido un error inesperado',
+      })
     } finally {
       setLoading(false)
     }
@@ -100,7 +103,6 @@ export function UserForm({ units, initialData, isEdit = false, userId }: UserFor
         </Link>
         <h1 className="text-2xl font-semibold text-primary-900">{isEdit ? 'Editar Usuario' : 'Nuevo Usuario'}</h1>
       </div>
-
       <div className="max-w-[40%]">
         <FormProvider {...methods}>
           <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
@@ -156,7 +158,7 @@ export function UserForm({ units, initialData, isEdit = false, userId }: UserFor
                 </Button>
               </Link>
               <Button type="submit" disabled={loading}>
-                {loading ? (isEdit ? 'Actualizando usuario...' : 'Creando usuario...') : isEdit ? 'Actualizar usuario' : 'Crear usuario'}
+                {loading ? (isEdit ? 'Modificando usuario...' : 'Creando usuario...') : isEdit ? 'Modificar usuario' : 'Nuevo usuario'}
               </Button>
             </div>
           </form>

@@ -1,7 +1,7 @@
 'use server';
 
 import { getServerSession } from 'next-auth';
-import { Amenity, SumRoom } from '@/types/enums';
+import { Amenity, SumRoom } from '@/utils/enums';
 import { ReservationDBSchema, ReservationSchemaType } from '@/app/schemas/reservation';
 import { authOptions } from '@/app/api/auth/[...nextauth]/route';
 import prisma from '@/lib/prisma';
