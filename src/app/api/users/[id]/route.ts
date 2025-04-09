@@ -22,7 +22,7 @@ export async function PUT(
 
     const { id } = params;
     const body = await request.json();
-    const { name, email, phone, password, role, unidad } = body;
+    const { name, email, phone, password, role, unidad, active } = body;
 
     // Check if user exists
     const existingUser = await prisma.user.findUnique({
@@ -63,16 +63,24 @@ export async function PUT(
       phone?: string;
       role: Role;
       password?: string;
+      active: boolean;
+      emailVerified?: Date;
     } = {
       name,
       email,
       phone,
       role,
+      active,
     };
 
     // Only update password if provided
     if (password) {
       updateData.password = await getHashedPassword(password);
+    }
+
+    // Set emailVerified to today if user is being activated and hasn't been verified
+    if (active && !existingUser.emailVerified) {
+      updateData.emailVerified = new Date();
     }
 
     // Update user

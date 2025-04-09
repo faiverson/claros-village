@@ -84,6 +84,14 @@ export const authOptions: AuthOptions = {
           return null;
         }
 
+        if (!user.emailVerified) {
+          throw new Error('Tu cuenta no está verificada. Por favor verifica tu correo electrónico.');
+        }
+
+        if (!user.active) {
+          throw new Error('Tu cuenta no está activa. Necesitamos validar tu información para activarla. Por favor comunicate con la intendencia para activarla.');
+        }
+
         return {
           id: user.id,
           name: user.name,

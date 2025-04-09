@@ -71,6 +71,8 @@ export async function POST(request: Request) {
     // Hash password
     const hashedPassword = await getHashedPassword(password);
 
+    const currentDate = new Date()
+
     // Create user with resident connection
     const newUser = await prisma.user.create({
       data: {
@@ -80,6 +82,7 @@ export async function POST(request: Request) {
         password: hashedPassword,
         role,
         active: true,
+        emailVerified: currentDate.toISOString(),
         residents: resident ? {
           create: {
             residentId: resident.id

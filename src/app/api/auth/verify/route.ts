@@ -50,7 +50,6 @@ export async function GET(request: Request) {
             where: { id: user.id },
             data: {
               emailVerified: new Date(),
-              active: true,
             },
           });
 

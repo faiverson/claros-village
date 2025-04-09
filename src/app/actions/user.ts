@@ -147,6 +147,7 @@ export async function getUserById(id: string) {
       role: user.role,
       phone: user.phone || undefined,
       unidad: user.residents?.[0]?.resident?.unidad || undefined,
+      active: user.active,
     }
 
     return { data: formattedUser }

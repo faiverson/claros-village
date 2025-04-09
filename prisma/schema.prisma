@@ -38,12 +38,12 @@ model User {
 model Resident {
   id              String         @id @default(cuid())
   name            String
-  email           String         @unique
+  email           String
   email_owners    String[]
   email_expenses  String[]
   manzana         String
   lote            String
-  unidad          String
+  unidad          String         @unique
   phone           String
   phones          String[]
   is_owner        Boolean
@@ -51,7 +51,7 @@ model Resident {
   numero_expensas String?
   direccion       String?
   floor           String?
-  departament     String?
+  department      String?
   neighborhood    String?
   users           UserResident[]
   createdAt       DateTime       @default(now()) @map(name: "created_at")

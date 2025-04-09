@@ -4,30 +4,19 @@ import { useState } from 'react'
 import { useRouter } from 'next/navigation'
 import { useForm, FormProvider } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
-import { z } from 'zod'
 import { Button } from '@/components/ui/button'
 import { CVInput } from '@/components/ui/cv-input'
 import { CVEmail } from '@/components/ui/cv-email'
 import { CVPassword } from '@/components/ui/cv-password'
 import { CVSelect } from '@/components/ui/cv-select'
 import { CVPhone } from '@/components/ui/cv-phone'
+import { CVSwitch } from '@/components/ui/cv-switch'
 import { Role } from '@prisma/client'
 import Link from 'next/link'
 import { ArrowLeft } from 'lucide-react'
 import { roleOptions } from '@/lib/dropdownOptions'
 import { toast } from 'sonner'
-
-const userSchema = z.object({
-  id: z.string(),
-  name: z.string().min(1, 'El nombre es requerido'),
-  email: z.string().email('Email inválido'),
-  phone: z.string().optional(),
-  password: z.string().min(6, 'La contraseña debe tener al menos 6 caracteres').optional(),
-  role: z.nativeEnum(Role),
-  unidad: z.string().optional(),
-})
-
-type UserInput = z.infer<typeof userSchema>
+import { userSchema, type UserInput } from '@/lib/validations/user'
 
 interface UserFormProps {
   units: string[]
@@ -44,7 +33,8 @@ export function UserForm({ units, initialData }: UserFormProps) {
   const methods = useForm<UserInput>({
     resolver: zodResolver(userSchema),
     defaultValues: {
-      role: Role.LANDLORD,
+      role: Role.RENTER,
+      active: true,
       ...initialData,
     },
   })
@@ -53,6 +43,7 @@ export function UserForm({ units, initialData }: UserFormProps) {
     handleSubmit,
     formState: { errors },
     watch,
+    control,
   } = methods
 
   const selectedRole = watch('role')
@@ -130,6 +121,7 @@ export function UserForm({ units, initialData }: UserFormProps) {
                   error={errors.unidad?.message}
                 />
               )}
+              <CVSwitch name="active" control={control} label="Usuario activo" error={errors.active?.message} />
             </div>
 
             {error && (

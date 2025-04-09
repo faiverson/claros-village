@@ -27,7 +27,7 @@ async function sendVerificationEmailToUser(email: string, name: string, token: s
 }
 
 async function handleInactiveUser(user: User, email: string, name: string) {
-  console.log('User exists but is not active, sending new verification email...');
+  console.log('User exists but is not verified, sending new verification email...');
   const token = await createVerificationToken(user.id);
   await sendVerificationEmailToUser(email, name, token);
   console.log('New verification email sent');
@@ -41,37 +41,35 @@ async function handleInactiveUser(user: User, email: string, name: string) {
   );
 }
 
-async function createNewUser(email: string, password: string, name: string, role: Role, residentId: string, phone: string) {
+async function createNewUser(email: string, password: string, name: string, role: Role, phone: string, residentId: string, active: boolean = false) {
   const hashedPassword = await getHashedPassword(password);
 
-  const user = await prisma.user.create({
-    data: {
-      email,
-      name,
-      password: hashedPassword,
-      role,
-      active: false,
-      phone,
-      residents: {
-        create: {
-          residentId
-        }
+  const userData = {
+    email,
+    name,
+    password: hashedPassword,
+    role,
+    active,
+    phone,
+    residents: {
+      create: {
+        residentId
       }
-    },
+    }
+  };
+
+  const user = await prisma.user.create({
+    data: userData,
   });
 
   const token = await createVerificationToken(user.id);
   await sendVerificationEmailToUser(email, name, token);
-  console.log('Verification email sent');
-
   return user;
 }
 
 export async function POST(req: Request) {
   try {
     const { email, password, name, role, unidad, phone } = await req.json();
-    // const { email, password, name, role, unidad, phone } = {email: 'fa.iverson@gmail.com', password: 'P@ssw0rd!!', name: 'Fabian Iverson', role: Role.LANDLORD, unidad: 'M31 L39', phone: '+5411123456789'};
-    console.log('Registration data:', { email, name, role, unidad, phone });
 
     // Validate input
     if (!email || !password || !name || !role || !unidad || !phone) {
@@ -86,25 +84,6 @@ export async function POST(req: Request) {
       where: { email },
     });
 
-    // Check if email exists in Resident table's email_owners array and matches the selected unit
-    const existingResident = await prisma.resident.findFirst({
-      where: {
-        email_owners: {
-          has: email
-        },
-        unidad: unidad
-      }
-    });
-    console.log('existingResident:', existingResident);
-
-    if (!existingResident) {
-      console.log('No matching resident found for email and unit');
-      return NextResponse.json(
-        { message: 'No se encontró un propietario con el email y/o unidad proporcionado' },
-        { status: 400 }
-      );
-    }
-
     if (existingUser) {
       if (!existingUser.active) {
         return handleInactiveUser(existingUser, email, name);
@@ -116,7 +95,30 @@ export async function POST(req: Request) {
       );
     }
 
-    const user = await createNewUser(email, password, name, role, existingResident!.id, phone);
+    // Find resident by unidad
+    const existingResident = await prisma.resident.findUnique({
+      where: { unidad }
+    });
+
+    if (!existingResident) {
+      return NextResponse.json(
+        { message: 'No se encontró la unidad especificada' },
+        { status: 400 }
+      );
+    }
+
+    // Check if email is in email_owners array
+    const isOwner = existingResident.email_owners.includes(email);
+
+    const user = await createNewUser(
+      email,
+      password,
+      name,
+      role,
+      phone,
+      existingResident.id,
+      isOwner
+    );
 
     return NextResponse.json(
       {
