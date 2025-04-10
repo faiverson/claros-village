@@ -1,0 +1,24 @@
+{
+  "RegisterForm": {
+    "welcome": "Welcome to Claros Village!",
+    "account": "Already have an account?",
+    "here": "Sign in here",
+    "email": "Email Address",
+    "email_placeholder": "Enter your email address",
+    "password": "Password",
+    "password_placeholder": "Enter your password",
+    "password_confirm": "Confirm Password",
+    "password_confirm_placeholder": "Enter your password again",
+    "error": "Error. Please contact the administrator",
+    "user_exist": "User already exists",
+    "resident_not_found": "Email not found, please contact management to resolve the issue",
+    "user_created": "User created successfully",
+    "btn_register": "Register",
+    "roleType": "User type",
+    "renter": "Renter",
+    "landlord": "Landlord"
+  },
+  "Emails": {
+    "verify": "Welcome to Claros Village!"
+  }
+}
