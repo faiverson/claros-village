@@ -1,8 +1,9 @@
 'use client'
 
 import { Control, Controller, FieldValues, Path } from 'react-hook-form'
-import { Switch } from '@/components/ui/switch'
+
 import { Label } from '@/components/ui/label'
+import { Switch } from '@/components/ui/switch'
 
 interface CVSwitchProps<T extends FieldValues> {
   name: Path<T>

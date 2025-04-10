@@ -1,7 +1,5 @@
-
-
-import { redirect } from 'next/navigation';
+import { redirect } from 'next/navigation'
 
 export default async function SumPage() {
-  redirect('/espacios-comunes/mis-reservas');
+  redirect('/espacios-comunes/mis-reservas')
 }

@@ -1,15 +1,21 @@
 'use client'
 
 import { forwardRef } from 'react'
-import dynamic from 'next/dynamic'
-import type { CSSObjectWithLabel, StylesConfig, MultiValue, GroupBase, SelectInstance } from 'react-select'
-import { Controller, useFormContext } from 'react-hook-form'
+
 import { Check } from 'lucide-react'
+import dynamic from 'next/dynamic'
+import { Controller, useFormContext } from 'react-hook-form'
+import type { CSSObjectWithLabel, StylesConfig, MultiValue, GroupBase, SelectInstance, OptionProps, Props } from 'react-select'
+
 import { Variant } from '@/utils/enums'
 
-const Select = dynamic(() => import('react-select'), {
+type SelectComponentType = React.ForwardRefExoticComponent<
+  Props<Option, true, GroupBase<Option>> & React.RefAttributes<SelectInstance<Option, true, GroupBase<Option>>>
+>
+
+const Select = dynamic(() => import('react-select').then((mod) => mod.default), {
   ssr: false,
-}) as any
+}) as SelectComponentType
 
 interface Option {
   value: string
@@ -115,7 +121,7 @@ export const CVMultiSelect = forwardRef<SelectInstance<Option, true, GroupBase<O
                 } satisfies StylesConfig
               }
               components={{
-                Option: ({ children, isSelected, ...props }: { children: React.ReactNode; isSelected: boolean; [key: string]: any }) => (
+                Option: ({ children, isSelected, ...props }: OptionProps<Option, true, GroupBase<Option>>) => (
                   <div {...props}>
                     <div className="flex items-center gap-2">
                       <div

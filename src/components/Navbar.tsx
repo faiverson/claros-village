@@ -1,13 +1,15 @@
 'use client'
 
 import { useState } from 'react'
-import Link from 'next/link'
+
 import { Menu, X } from 'lucide-react'
-import useSmoothScroll from '@/hooks/useSmoothScroll'
-import { UserDropdownMenu } from '@/components/UserDropdownMenu'
-import { Session } from 'next-auth'
-import { Logo } from '@/components/ui/logo'
+import Link from 'next/link'
 import { usePathname } from 'next/navigation'
+import { Session } from 'next-auth'
+
+import { Logo } from '@/components/ui/logo'
+import { UserDropdownMenu } from '@/components/UserDropdownMenu'
+import useSmoothScroll from '@/hooks/useSmoothScroll'
 
 interface NavLink {
   href: string

@@ -59,19 +59,9 @@ export const rolePermissions: Record<Role, Permission[]> = {
     Permission.VIEW_REPORTS,
     Permission.GENERATE_REPORTS,
   ],
-  [Role.GUARD]: [
-    Permission.VIEW_RESIDENTS,
-    Permission.VIEW_SUM,
-    Permission.CREATE_SUM,
-  ],
-  [Role.LANDLORD]: [
-    Permission.VIEW_RESIDENTS,
-    Permission.VIEW_SUM,
-  ],
-  [Role.RENTER]: [
-    Permission.VIEW_RESIDENTS,
-    Permission.VIEW_SUM,
-  ],
+  [Role.GUARD]: [Permission.VIEW_RESIDENTS, Permission.VIEW_SUM, Permission.CREATE_SUM],
+  [Role.LANDLORD]: [Permission.VIEW_RESIDENTS, Permission.VIEW_SUM],
+  [Role.RENTER]: [Permission.VIEW_RESIDENTS, Permission.VIEW_SUM],
 }
 
 // Helper function to check if a role has a specific permission

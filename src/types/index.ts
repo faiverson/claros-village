@@ -1,19 +1,19 @@
-import { Role } from "@prisma/client";
+import { Role } from '@prisma/client'
 
 export interface UserWithRole {
-  id: string;
-  name: string | null;
-  email: string;
-  emailVerified?: Date | null;
-  image?: string | null;
-  password?: string;
-  role: Role;
+  id: string
+  name: string | null
+  email: string
+  emailVerified?: Date | null
+  image?: string | null
+  password?: string
+  role: Role
 }
 
 export interface SessionUser {
-  id?: string;
-  name?: string | null;
-  email?: string | null;
-  image?: string | null;
-  role?: string;
+  id?: string
+  name?: string | null
+  email?: string | null
+  image?: string | null
+  role?: string
 }

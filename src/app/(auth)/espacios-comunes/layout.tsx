@@ -1,5 +1,6 @@
-import CommonSpacesNavigation from '@/components/CommonSpacesNavigation'
 import * as LucideIcon from 'lucide-react'
+
+import CommonSpacesNavigation from '@/components/CommonSpacesNavigation'
 
 export default function EspaciosComunesLayout({ children }: { children: React.ReactNode }) {
   const navItems = [

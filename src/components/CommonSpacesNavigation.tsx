@@ -1,10 +1,11 @@
 'use client'
 
-import Link from 'next/link'
-import { usePathname } from 'next/navigation'
-import { cn } from '@/lib/utils'
 import * as LucideIcon from 'lucide-react'
 import { LucideProps } from 'lucide-react'
+import Link from 'next/link'
+import { usePathname } from 'next/navigation'
+
+import { cn } from '@/lib/utils'
 
 interface NavItem {
   title: string

@@ -14,7 +14,7 @@ export async function getUnits() {
       },
     })
 
-    return units.map(unit => unit.unidad)
+    return units.map((unit) => unit.unidad)
   } catch (error) {
     console.error('Error fetching units:', error)
     return []

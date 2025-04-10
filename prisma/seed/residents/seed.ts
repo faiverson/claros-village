@@ -1,6 +1,8 @@
-import { PrismaClient } from '@prisma/client'
-import { FileResident } from '@/utils/types/resident'
 import fs from 'fs'
+
+import { PrismaClient } from '@prisma/client'
+
+import { FileResident } from '@/utils/types/resident'
 
 const prisma = new PrismaClient()
 
@@ -9,9 +11,7 @@ export async function seedResidents() {
   await prisma.$executeRaw`TRUNCATE TABLE users_residents CASCADE;`
   await prisma.$executeRaw`TRUNCATE TABLE residents CASCADE;`
 
-  const residents: FileResident[] = JSON.parse(
-    fs.readFileSync('static/privates/residents.json', 'utf8'),
-  )
+  const residents: FileResident[] = JSON.parse(fs.readFileSync('static/privates/residents.json', 'utf8'))
 
   console.log(`Total Residents: ${residents.length}`)
   for (const resident of residents) {
@@ -23,9 +23,7 @@ export async function seedResidents() {
         lote: resident.lote,
         name: resident.nombre,
         email_owners: resident.email_propietario,
-        email_expenses: Array.isArray(resident.email_expensas)
-          ? resident.email_expensas
-          : [resident.email_expensas],
+        email_expenses: Array.isArray(resident.email_expensas) ? resident.email_expensas : [resident.email_expensas],
         manzana: resident.manzana,
         phone: resident.telefono,
         phones: resident.telefonos,
@@ -43,9 +41,7 @@ export async function seedResidents() {
         unidad: resident.unidad,
         name: resident.nombre,
         email_owners: resident.email_propietario,
-        email_expenses: Array.isArray(resident.email_expensas)
-          ? resident.email_expensas
-          : [resident.email_expensas],
+        email_expenses: Array.isArray(resident.email_expensas) ? resident.email_expensas : [resident.email_expensas],
         manzana: resident.manzana,
         phone: resident.telefono,
         phones: resident.telefonos,

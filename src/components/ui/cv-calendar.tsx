@@ -1,8 +1,9 @@
 'use client'
 
-import { Calendar } from '@/components/ui/calendar'
 import { addDays, startOfDay } from 'date-fns'
 import { Controller, useFormContext } from 'react-hook-form'
+
+import { Calendar } from '@/components/ui/calendar'
 import { cn } from '@/lib/utils'
 
 interface CVCalendarProps {

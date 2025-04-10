@@ -1,14 +1,15 @@
 'use client'
 
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table'
 import { CheckCircle2, XCircle, User, Mail, Shield, Activity, CheckCircle, Plus, Phone, Pencil, Search, Trash2 } from 'lucide-react'
-import { Button } from '@/components/ui/button'
 import Link from 'next/link'
-import { roleOptions } from '@/lib/dropdownOptions'
-import { CVSelect } from '@/components/ui/cv-select'
-import { useForm, FormProvider } from 'react-hook-form'
-import { CVInput } from '@/components/ui/cv-input'
 import { useRouter } from 'next/navigation'
+import { useForm, FormProvider } from 'react-hook-form'
+
+import { Button } from '@/components/ui/button'
+import { CVInput } from '@/components/ui/cv-input'
+import { CVSelect } from '@/components/ui/cv-select'
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table'
+import { roleOptions } from '@/lib/dropdownOptions'
 
 interface User {
   id: string

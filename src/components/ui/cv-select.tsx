@@ -1,14 +1,16 @@
 'use client'
 
 import { forwardRef } from 'react'
+
 import dynamic from 'next/dynamic'
-import type { CSSObjectWithLabel, StylesConfig, SingleValue, GroupBase, SelectInstance } from 'react-select'
 import { Controller, useFormContext } from 'react-hook-form'
+import type { CSSObjectWithLabel, StylesConfig, SingleValue, GroupBase, SelectInstance } from 'react-select'
+
 import { Variant } from '@/utils/enums'
 
 const Select = dynamic(() => import('react-select'), {
   ssr: false,
-}) as any
+}) as typeof import('react-select').default<Option, false, GroupBase<Option>>
 
 interface Option {
   value: string

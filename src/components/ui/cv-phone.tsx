@@ -1,9 +1,10 @@
 'use client'
 
 import { forwardRef } from 'react'
+
+import { Controller, useFormContext } from 'react-hook-form'
 import PhoneInput from 'react-phone-input-2'
 import 'react-phone-input-2/lib/style.css'
-import { Controller, useFormContext } from 'react-hook-form'
 
 interface CVPhoneProps extends React.InputHTMLAttributes<HTMLInputElement> {
   error?: string

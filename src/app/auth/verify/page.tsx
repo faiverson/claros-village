@@ -1,11 +1,12 @@
 'use client'
 
-import { useEffect, useState } from 'react'
-import { useSearchParams, useRouter } from 'next/navigation'
-import Link from 'next/link'
-import { Loader2, CheckCircle2, XCircle, ArrowLeft } from 'lucide-react'
+import { Suspense, useEffect, useState } from 'react'
 
-export default function VerifyEmail() {
+import { Loader2, CheckCircle2, XCircle, ArrowLeft } from 'lucide-react'
+import Link from 'next/link'
+import { useSearchParams, useRouter } from 'next/navigation'
+
+function VerifyEmailContent() {
   const searchParams = useSearchParams()
   const router = useRouter()
   const [status, setStatus] = useState<'loading' | 'success' | 'error'>('loading')
@@ -82,5 +83,13 @@ export default function VerifyEmail() {
         </div>
       </div>
     </div>
+  )
+}
+
+export default function VerifyEmail() {
+  return (
+    <Suspense fallback={<div>Loading...</div>}>
+      <VerifyEmailContent />
+    </Suspense>
   )
 }
