@@ -1,9 +1,11 @@
 'use client'
 
 import { useState } from 'react'
+
 import { Eye, EyeOff, Lock } from 'lucide-react'
-import { cn } from '@/lib/utils'
 import { Controller, useFormContext } from 'react-hook-form'
+
+import { cn } from '@/lib/utils'
 
 interface CVPasswordProps extends React.InputHTMLAttributes<HTMLInputElement> {
   error?: string

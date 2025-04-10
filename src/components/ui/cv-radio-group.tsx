@@ -1,7 +1,9 @@
-import { RadioGroup } from '@/components/ui/radio-group'
-import { CVRadioOption } from '@/components/ui/cv-radio-option'
-import { Controller, useFormContext } from 'react-hook-form'
 import React from 'react'
+
+import { Controller, useFormContext } from 'react-hook-form'
+
+import { CVRadioOption } from '@/components/ui/cv-radio-option'
+import { RadioGroup } from '@/components/ui/radio-group'
 import { cn } from '@/lib/utils'
 
 interface RadioOption {

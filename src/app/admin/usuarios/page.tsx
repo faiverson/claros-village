@@ -1,8 +1,11 @@
+import { Role } from '@prisma/client'
+import { XCircle } from 'lucide-react'
+
 import { getUsers } from '@/app/actions/user'
 import { UsersTable } from '@/components/UsersTable'
-import { XCircle } from 'lucide-react'
 import { checkServerPermission } from '@/hooks/useServerPermission'
-import { Role } from '@prisma/client'
+
+export const dynamic = 'force-dynamic'
 
 export default async function UsuariosPage() {
   const result = await getUsers()

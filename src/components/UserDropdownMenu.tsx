@@ -1,13 +1,14 @@
 'use client'
 
-import { signOut } from 'next-auth/react'
-import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from '@/components/ui/dropdown-menu'
-import { Button } from '@/components/ui/button'
-import { LogOut, Building, Users, User } from 'lucide-react'
-import { Session } from 'next-auth'
-import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
-import Link from 'next/link'
 import { Role } from '@prisma/client'
+import { LogOut, Building, Users, User } from 'lucide-react'
+import Link from 'next/link'
+import { Session } from 'next-auth'
+import { signOut } from 'next-auth/react'
+
+import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
+import { Button } from '@/components/ui/button'
+import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from '@/components/ui/dropdown-menu'
 import { usePermission } from '@/hooks/usePermission'
 
 interface UserDropdownMenuProps {

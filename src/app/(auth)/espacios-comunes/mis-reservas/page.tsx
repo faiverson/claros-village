@@ -1,5 +1,5 @@
-import { MyReservations } from '@/components/MyReservations'
 import { getReservations } from '@/app/actions/reservation'
+import { MyReservations } from '@/components/MyReservations'
 
 export default async function ReservasPage() {
   const result = await getReservations()

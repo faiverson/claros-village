@@ -1,24 +1,34 @@
-import { Resend } from 'resend';
+import { Resend } from 'resend'
 
-const resend = new Resend(process.env.RESEND_API_KEY);
+// Initialize Resend with proper environment variable handling
+console.debug('RESEND_API_KEY', process.env.RESEND_API_KEY)
+const resend = new Resend(process.env.RESEND_API_KEY)
 
 interface ResendError {
-  message: string;
-  name?: string;
-  stack?: string;
+  message: string
+  name?: string
+  stack?: string
 }
 
 export async function sendVerificationEmail(email: string, name: string, verificationUrl: string) {
   try {
-    console.log('Starting email sending process...');
+    if (!process.env.RESEND_API_KEY) {
+      throw new Error('RESEND_API_KEY is not defined')
+    }
+
+    if (!process.env.RESEND_FROM_EMAIL) {
+      throw new Error('RESEND_FROM_EMAIL is not defined')
+    }
+
+    console.log('Starting email sending process...')
     console.log('Email parameters:', {
       to: email,
       name,
       verificationUrl,
-    });
+    })
 
     const { error } = await resend.emails.send({
-      from: process.env.RESEND_FROM_EMAIL!,
+      from: process.env.RESEND_FROM_EMAIL,
       to: email,
       subject: 'Verifica tu cuenta - Claros Village',
       html: `
@@ -36,25 +46,25 @@ export async function sendVerificationEmail(email: string, name: string, verific
           <p>Si no solicitaste esta verificación, por favor ignora este correo.</p>
         </div>
       `,
-    });
+    })
 
     if (error) {
       console.error('Email sending error:', {
         error,
         errorMessage: error.message,
         errorName: error.name,
-      });
-      throw error;
+      })
+      throw error
     }
 
-    return true;
+    return true
   } catch (error: unknown) {
-    const resendError = error as ResendError;
+    const resendError = error as ResendError
     console.error('Detailed email sending error:', {
       error: resendError.message,
       name: resendError.name,
       stack: resendError.stack,
-    });
-    throw error;
+    })
+    throw error
   }
 }

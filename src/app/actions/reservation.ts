@@ -1,35 +1,36 @@
-'use server';
+'use server'
 
-import { getServerSession } from 'next-auth';
-import { Amenity, SumRoom } from '@/utils/enums';
-import { ReservationDBSchema, ReservationSchemaType } from '@/app/schemas/reservation';
-import { authOptions } from '@/app/api/auth/[...nextauth]/route';
-import prisma from '@/lib/prisma';
+import { getServerSession } from 'next-auth'
+
+import { ReservationDBSchema, ReservationSchemaType } from '@/app/schemas/reservation'
+import { authOptions } from '@/lib/auth'
+import prisma from '@/lib/prisma'
+import { Amenity, SumRoom } from '@/utils/enums'
 
 export async function addReservation(data: ReservationSchemaType) {
-  const session = await getServerSession(authOptions);
-  const userId = session?.user?.id;
-  const userRole = session?.user?.role;
+  const session = await getServerSession(authOptions)
+  const userId = session?.user?.id
+  const userRole = session?.user?.role
 
   if (!userId) {
-    return { error: true, key: 'invalid_session' };
+    return { error: true, key: 'invalid_session' }
   }
 
   // If user is not admin and trying to create a reservation for themselves,
   // check if they are RENTER or LANDLORD
   if (!data.userId && userRole && userRole !== 'RENTER' && userRole !== 'LANDLORD') {
-    return { error: true, key: 'invalid_role' };
+    return { error: true, key: 'invalid_role' }
   }
 
-  const validatedFields = ReservationDBSchema.safeParse(data);
+  const validatedFields = ReservationDBSchema.safeParse(data)
 
   if (!validatedFields.success) {
-    return { error: true, key: 'invalid_reservation' };
+    return { error: true, key: 'invalid_reservation' }
   }
 
-  const { amenity, shift, date_at, rooms, observation } = data;
+  const { amenity, shift, date_at, rooms, observation } = data
 
-  let newReservation;
+  let newReservation
   switch (amenity) {
     case Amenity.Sum: {
       const sumData = {
@@ -38,54 +39,40 @@ export async function addReservation(data: ReservationSchemaType) {
         observation,
         rooms,
         userId: data.userId || userId,
-      };
-
-      const existReservation = await getExistSumReservation(sumData);
-
-      if (existReservation) {
-        return { error: true, key: 'reservation_exist' };
       }
 
-      newReservation = await addSumReservation(sumData);
-      break;
+      const existReservation = await getExistSumReservation(sumData)
+
+      if (existReservation) {
+        return { error: true, key: 'reservation_exist' }
+      }
+
+      newReservation = await addSumReservation(sumData)
+      break
     }
 
     default:
-      break;
+      break
   }
 
-  return { success: true, data: newReservation };
+  return { success: true, data: newReservation }
 }
 
 // Helper function to check if a reservation exists
-async function getExistSumReservation(data: {
-  shift: string;
-  dateAt: Date;
-  rooms: string[];
-  userId: string;
-}) {
+async function getExistSumReservation(data: { shift: string; dateAt: Date; rooms: string[]; userId: string }) {
   const existingReservation = await prisma.sumReservation.findFirst({
     where: {
       dateAt: data.dateAt,
       shift: data.shift,
-      OR: [
-        { roomBig: data.rooms.includes(SumRoom.Big) },
-        { roomSmall: data.rooms.includes(SumRoom.Small) }
-      ]
-    }
-  });
+      OR: [{ roomBig: data.rooms.includes(SumRoom.Big) }, { roomSmall: data.rooms.includes(SumRoom.Small) }],
+    },
+  })
 
-  return !!existingReservation;
+  return !!existingReservation
 }
 
 // Helper function to add a SUM reservation
-async function addSumReservation(data: {
-  shift: string;
-  dateAt: Date;
-  observation: string | undefined;
-  rooms: string[];
-  userId: string;
-}) {
+async function addSumReservation(data: { shift: string; dateAt: Date; observation: string | undefined; rooms: string[]; userId: string }) {
   return await prisma.sumReservation.create({
     data: {
       dateAt: data.dateAt,
@@ -99,53 +86,53 @@ async function addSumReservation(data: {
         },
       },
     },
-  });
+  })
 }
 
 export async function getReservations() {
-  const session = await getServerSession(authOptions);
+  const session = await getServerSession(authOptions)
 
   if (!session?.user?.id) {
     return {
       error: true,
       key: 'invalid_session',
-      message: 'Invalid session'
-    };
+      message: 'Invalid session',
+    }
   }
 
   try {
     const reservations = await prisma.sumReservation.findMany({
       where: {
-        userId: session.user.id
+        userId: session.user.id,
       },
       orderBy: {
-        dateAt: 'asc'
-      }
-    });
+        dateAt: 'asc',
+      },
+    })
 
     return {
       error: false,
-      data: reservations
-    };
+      data: reservations,
+    }
   } catch (error) {
-    console.error('Error fetching reservations:', error);
+    console.error('Error fetching reservations:', error)
     return {
       error: true,
       key: 'fetch_error',
-      message: 'Error fetching reservations'
-    };
+      message: 'Error fetching reservations',
+    }
   }
 }
 
 export async function deleteReservation(id: string) {
-  const session = await getServerSession(authOptions);
+  const session = await getServerSession(authOptions)
 
   if (!session?.user?.id) {
     return {
       error: true,
       key: 'invalid_session',
-      message: 'Invalid session'
-    };
+      message: 'Invalid session',
+    }
   }
 
   try {
@@ -153,115 +140,113 @@ export async function deleteReservation(id: string) {
     const reservation = await prisma.sumReservation.findFirst({
       where: {
         id,
-        userId: session.user.id
-      }
-    });
+        userId: session.user.id,
+      },
+    })
 
     if (!reservation) {
       return {
         error: true,
         key: 'not_found',
-        message: 'Reservation not found'
-      };
+        message: 'Reservation not found',
+      }
     }
 
     // Check if the reservation is in the past
-    const reservationDate = new Date(reservation.dateAt);
+    const reservationDate = new Date(reservation.dateAt)
     if (reservationDate < new Date()) {
       return {
         error: true,
         key: 'past_reservation',
-        message: 'Cannot delete past reservations'
-      };
+        message: 'Cannot delete past reservations',
+      }
     }
 
     // Delete the reservation
     await prisma.sumReservation.delete({
-      where: { id }
-    });
+      where: { id },
+    })
 
     return {
       error: false,
-      message: 'Reservation deleted successfully'
-    };
+      message: 'Reservation deleted successfully',
+    }
   } catch (error) {
-    console.error('Error deleting reservation:', error);
+    console.error('Error deleting reservation:', error)
     return {
       error: true,
       key: 'delete_error',
-      message: 'Error deleting reservation'
-    };
+      message: 'Error deleting reservation',
+    }
   }
 }
 
 export async function getReservationsFromToday() {
   try {
-    const today = new Date();
-    today.setHours(0, 0, 0, 0);
+    const today = new Date()
+    today.setHours(0, 0, 0, 0)
 
     const reservations = await prisma.sumReservation.findMany({
       where: {
         dateAt: {
-          gte: today
-        }
+          gte: today,
+        },
       },
       orderBy: {
-        dateAt: 'asc'
-      }
-    });
+        dateAt: 'asc',
+      },
+    })
 
     return {
       error: false,
-      data: reservations || []
-    };
+      data: reservations || [],
+    }
   } catch (error) {
-    console.error('Error fetching reservations:', error);
+    console.error('Error fetching reservations:', error)
     return {
       error: true,
       key: 'fetch_error',
-      message: 'Error fetching reservations'
-    };
+      message: 'Error fetching reservations',
+    }
   }
 }
 
 export async function getAllReservationsFromToday() {
-  const session = await getServerSession(authOptions);
+  const session = await getServerSession(authOptions)
 
   if (!session?.user?.id) {
     return {
       error: true,
       key: 'invalid_session',
-      message: 'Invalid session'
-    };
+      message: 'Invalid session',
+    }
   }
 
   try {
-    const today = new Date();
-    today.setHours(0, 0, 0, 0);
+    const today = new Date()
+    today.setHours(0, 0, 0, 0)
 
     const reservations = await prisma.sumReservation.findMany({
       where: {
         dateAt: {
-          gte: today
-        }
+          gte: today,
+        },
       },
       orderBy: {
-        dateAt: 'asc'
-      }
-    });
-
-    console.log('All reservations from today:', reservations); // Debug log
+        dateAt: 'asc',
+      },
+    })
 
     return {
       error: false,
-      data: reservations || []
-    };
+      data: reservations || [],
+    }
   } catch (error) {
-    console.error('Error fetching reservations:', error);
+    console.error('Error fetching reservations:', error)
     return {
       error: true,
       key: 'fetch_error',
-      message: 'Error fetching reservations'
-    };
+      message: 'Error fetching reservations',
+    }
   }
 }

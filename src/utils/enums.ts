@@ -8,16 +8,16 @@ export enum Variant {
 export enum Amenity {
   Sum = 'sum',
   Gym = 'gym',
-  Soccer = 'soccer'
+  Soccer = 'soccer',
 }
 
 export enum SumShift {
   Day = 'day',
   Night = 'night',
-  Both = 'both'
+  Both = 'both',
 }
 
 export enum SumRoom {
   Big = 'big',
-  Small = 'small'
+  Small = 'small',
 }

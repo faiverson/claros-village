@@ -1,7 +1,7 @@
-import { UserForm } from '@/components/forms/UserForm'
-import { getUserById } from '@/app/actions/user'
-import { handleServerError } from '@/hooks/useServerErrorRedirect'
 import { getUnits } from '@/app/actions/unit'
+import { getUserById } from '@/app/actions/user'
+import { UserForm } from '@/components/forms/UserForm'
+import { handleServerError } from '@/hooks/useServerErrorRedirect'
 
 interface EditUserPageProps {
   params: Promise<{

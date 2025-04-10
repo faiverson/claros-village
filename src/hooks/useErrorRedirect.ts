@@ -1,6 +1,6 @@
 import { useRouter } from 'next/navigation'
 
-type ErrorType = 'Unauthorized' | 'Forbidden' | 'NotFound' | 'InternalServerError'
+import { ErrorType } from '@/utils/types/error'
 
 interface ErrorRedirectOptions {
   onUnauthorized?: () => void
@@ -24,7 +24,7 @@ export function useErrorRedirect(options: ErrorRedirectOptions = {}) {
     ...options,
   }
 
-  const handleError = (error: string | undefined) => {
+  const handleError = (error: ErrorType | undefined) => {
     if (!error) return
 
     switch (error) {
@@ -34,10 +34,10 @@ export function useErrorRedirect(options: ErrorRedirectOptions = {}) {
       case 'Forbidden':
         handlers.onForbidden()
         break
-      case 'User not found':
+      case 'NotFound':
         handlers.onNotFound()
         break
-      case 'Internal Server Error':
+      case 'InternalServerError':
         handlers.onInternalServerError()
         break
     }

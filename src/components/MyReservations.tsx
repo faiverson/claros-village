@@ -1,13 +1,15 @@
 'use client'
 
-import { SumReservation } from '@prisma/client'
-import { SumShift } from '@/utils/enums'
-import { deleteReservation } from '@/app/actions/reservation'
-import { toast } from 'sonner'
-import { useRouter } from 'next/navigation'
-import { CVDeleteButton } from '@/components/ui/cv-delete-button'
 import { useState } from 'react'
+
+import { SumReservation } from '@prisma/client'
+import { useRouter } from 'next/navigation'
+import { toast } from 'sonner'
+
+import { deleteReservation } from '@/app/actions/reservation'
+import { CVDeleteButton } from '@/components/ui/cv-delete-button'
 import { cn } from '@/lib/utils'
+import { SumShift } from '@/utils/enums'
 
 interface MyReservationsProps {
   reservations: SumReservation[]

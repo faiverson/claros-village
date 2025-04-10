@@ -1,14 +1,10 @@
 'use server'
 
-import { prisma } from '@/lib/prisma'
 import { revalidatePath } from 'next/cache'
 
-export async function submitContactForm(formData: {
-  name: string
-  email: string
-  phone: string
-  message: string
-}) {
+import { prisma } from '@/lib/prisma'
+
+export async function submitContactForm(formData: { name: string; email: string; phone: string; message: string }) {
   try {
     await prisma.contactSubmission.create({
       data: {

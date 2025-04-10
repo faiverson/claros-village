@@ -1,8 +1,9 @@
-import { Navbar } from '@/components/Navbar'
-import Hero from '@/components/Hero'
-import Footer from '@/components/Footer'
 import { getServerSession } from 'next-auth'
-import { authOptions } from '@/app/api/auth/[...nextauth]/route'
+
+import Footer from '@/components/Footer'
+import Hero from '@/components/Hero'
+import { Navbar } from '@/components/Navbar'
+import { authOptions } from '@/lib/auth'
 
 const navLinks = [
   { href: '#home', label: 'Inicio' },

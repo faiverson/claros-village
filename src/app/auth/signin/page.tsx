@@ -1,14 +1,16 @@
 'use client'
 
 import { useState } from 'react'
-import { signIn } from 'next-auth/react'
-import { useRouter } from 'next/navigation'
-import Link from 'next/link'
-import { loginSchema, type LoginInput } from '@/lib/validations/auth'
+
 import { zodResolver } from '@hookform/resolvers/zod'
+import Link from 'next/link'
+import { useRouter } from 'next/navigation'
+import { signIn } from 'next-auth/react'
 import { useForm, FormProvider } from 'react-hook-form'
-import { CVPassword } from '@/components/ui/cv-password'
+
 import { CVEmail } from '@/components/ui/cv-email'
+import { CVPassword } from '@/components/ui/cv-password'
+import { loginSchema, type LoginInput } from '@/lib/validations/auth'
 
 export default function SignIn() {
   const router = useRouter()

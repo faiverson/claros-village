@@ -1,10 +1,11 @@
 'use server'
 
-import { getServerSession } from 'next-auth'
-import { authOptions } from '@/app/api/auth/[...nextauth]/route'
-import prisma from '@/lib/prisma'
 import { Role } from '@prisma/client'
+import { getServerSession } from 'next-auth'
+
 import { checkServerPermission } from '@/hooks/useServerPermission'
+import { authOptions } from '@/lib/auth'
+import prisma from '@/lib/prisma'
 
 export async function getResidentUsers() {
   try {
@@ -42,7 +43,7 @@ export async function getResidentUsers() {
       },
     })
 
-    const formattedUsers = users.map(user => ({
+    const formattedUsers = users.map((user) => ({
       id: user.id,
       name: user.name,
       unidad: user.residents?.[0]?.resident?.unidad || null,
@@ -70,8 +71,8 @@ export async function getUsers() {
     const users = await prisma.user.findMany({
       where: {
         id: {
-          not: session.user.id
-        }
+          not: session.user.id,
+        },
       },
       orderBy: {
         name: 'asc',
@@ -89,7 +90,7 @@ export async function getUsers() {
       },
     })
 
-    const formattedUsers = users.map(user => ({
+    const formattedUsers = users.map((user) => ({
       id: user.id,
       name: user.name,
       email: user.email,
@@ -127,11 +128,11 @@ export async function getUserById(id: string) {
           include: {
             resident: {
               select: {
-                unidad: true
-              }
-            }
-          }
-        }
+                unidad: true,
+              },
+            },
+          },
+        },
       },
     })
 

@@ -1,4 +1,5 @@
 import { PrismaClient } from '@prisma/client'
+
 import { seedResidents } from './residents/seed.js'
 import { seedUsers } from './users/seed.js'
 
@@ -18,7 +19,7 @@ async function main() {
         await seedResidents()
         break
       default:
-        console.log(`Unknown entity: ${entity}`)
+        console.warn(`Unknown entity: ${entity}`)
     }
   }
 }

@@ -1,5 +1,6 @@
 import { Role } from '@prisma/client'
 import { useSession } from 'next-auth/react'
+
 import { Permission, hasPermission } from '@/types/permissions'
 
 type AllowedRoles = readonly Role[]
@@ -19,7 +20,7 @@ export function usePermission(allowedRoles?: AllowedRoles, allowedPermissions?: 
 
     // Check specific permissions
     if (allowedPermissions) {
-      return allowedPermissions.some(permission => hasPermission(userRole as Role, permission))
+      return allowedPermissions.some((permission) => hasPermission(userRole as Role, permission))
     }
 
     return false

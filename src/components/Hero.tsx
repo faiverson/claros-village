@@ -1,10 +1,12 @@
 'use client'
 
-import Image from 'next/image'
-import { Button } from '@/components/ui/button'
 import { MapPin, Phone, Mail, ChevronRight, Home, ShieldUser, Trees, Building2 } from 'lucide-react'
+import Image from 'next/image'
 import Link from 'next/link'
+
+import { Button } from '@/components/ui/button'
 import useSmoothScroll from '@/hooks/useSmoothScroll'
+
 import { ContactForm } from './ContactForm'
 
 export default function Hero() {

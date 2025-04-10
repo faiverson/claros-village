@@ -1,17 +1,19 @@
 'use client'
 
 import { useState } from 'react'
-import Link from 'next/link'
-import { registerSchema, type RegisterInput } from '@/lib/validations/auth'
+
 import { zodResolver } from '@hookform/resolvers/zod'
-import { useForm, FormProvider } from 'react-hook-form'
 import { Role } from '@prisma/client'
-import { CVPassword } from '@/components/ui/cv-password'
+import Link from 'next/link'
+import { useForm, FormProvider } from 'react-hook-form'
+
 import { CVEmail } from '@/components/ui/cv-email'
-import { CVPhone } from '@/components/ui/cv-phone'
 import { CVInput } from '@/components/ui/cv-input'
+import { CVPassword } from '@/components/ui/cv-password'
+import { CVPhone } from '@/components/ui/cv-phone'
 import { CVRadioGroup } from '@/components/ui/cv-radio-group'
 import { CVSelect } from '@/components/ui/cv-select'
+import { registerSchema, type RegisterInput } from '@/lib/validations/auth'
 
 const EMPTY_STRING = ''
 
@@ -43,10 +45,7 @@ export function RegisterForm({ units }: RegisterFormProps) {
     handleSubmit,
     formState: { errors },
     reset,
-    getValues,
   } = methods
-
-  console.log(getValues())
 
   const resetForm = () => {
     setSuccess(false)

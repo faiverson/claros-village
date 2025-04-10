@@ -1,16 +1,18 @@
 'use client'
 
-import { Button } from '@/components/ui/button'
-import { CVInput } from '@/components/ui/cv-input'
-import { CVTextArea } from '@/components/ui/cv-textarea'
-import { CVPhone } from '@/components/ui/cv-phone'
-import { CVEmail } from '@/components/ui/cv-email'
-import { useForm, FormProvider } from 'react-hook-form'
-import { submitContactForm } from '@/actions/contact'
 import { useState } from 'react'
-import { toast } from 'sonner'
+
 import { zodResolver } from '@hookform/resolvers/zod'
+import { useForm, FormProvider } from 'react-hook-form'
+import { toast } from 'sonner'
 import { z } from 'zod'
+
+import { submitContactForm } from '@/actions/contact'
+import { Button } from '@/components/ui/button'
+import { CVEmail } from '@/components/ui/cv-email'
+import { CVInput } from '@/components/ui/cv-input'
+import { CVPhone } from '@/components/ui/cv-phone'
+import { CVTextArea } from '@/components/ui/cv-textarea'
 
 const contactSchema = z.object({
   name: z.string().min(1, 'El nombre es requerido').min(3, 'El nombre debe tener al menos 3 caracteres'),

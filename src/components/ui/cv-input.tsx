@@ -1,8 +1,9 @@
 'use client'
 
-import { cn } from '@/lib/utils'
-import { Controller, useFormContext } from 'react-hook-form'
 import { LucideIcon } from 'lucide-react'
+import { Controller, useFormContext } from 'react-hook-form'
+
+import { cn } from '@/lib/utils'
 import { Variant } from '@/utils/enums'
 
 interface CVInputProps extends React.InputHTMLAttributes<HTMLInputElement> {

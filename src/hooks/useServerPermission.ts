@@ -1,6 +1,7 @@
-import { getServerSession } from 'next-auth'
-import { authOptions } from '@/app/api/auth/[...nextauth]/route'
 import { Role } from '@prisma/client'
+import { getServerSession } from 'next-auth'
+
+import { authOptions } from '@/lib/auth'
 
 export async function checkServerPermission(roles: Role[]) {
   const session = await getServerSession(authOptions)

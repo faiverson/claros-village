@@ -1,8 +1,9 @@
 'use client'
 
 import { Inbox } from 'lucide-react'
-import { cn } from '@/lib/utils'
 import { Controller, useFormContext } from 'react-hook-form'
+
+import { cn } from '@/lib/utils'
 
 interface CVEmailProps extends React.InputHTMLAttributes<HTMLInputElement> {
   error?: string
