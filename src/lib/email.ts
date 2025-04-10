@@ -1,5 +1,7 @@
 import { Resend } from 'resend'
 
+// Initialize Resend with proper environment variable handling
+console.debug('RESEND_API_KEY', process.env.RESEND_API_KEY)
 const resend = new Resend(process.env.RESEND_API_KEY)
 
 interface ResendError {
@@ -10,6 +12,14 @@ interface ResendError {
 
 export async function sendVerificationEmail(email: string, name: string, verificationUrl: string) {
   try {
+    if (!process.env.RESEND_API_KEY) {
+      throw new Error('RESEND_API_KEY is not defined')
+    }
+
+    if (!process.env.RESEND_FROM_EMAIL) {
+      throw new Error('RESEND_FROM_EMAIL is not defined')
+    }
+
     console.log('Starting email sending process...')
     console.log('Email parameters:', {
       to: email,
@@ -18,7 +28,7 @@ export async function sendVerificationEmail(email: string, name: string, verific
     })
 
     const { error } = await resend.emails.send({
-      from: process.env.RESEND_FROM_EMAIL!,
+      from: process.env.RESEND_FROM_EMAIL,
       to: email,
       subject: 'Verifica tu cuenta - Claros Village',
       html: `

@@ -2,6 +2,10 @@ import type { NextConfig } from 'next'
 
 const nextConfig: NextConfig = {
   reactStrictMode: process.env.NEXT_PUBLIC_STRICT_MODE === 'true',
+  env: {
+    RESEND_API_KEY: process.env.RESEND_API_KEY,
+    RESEND_FROM_EMAIL: process.env.RESEND_FROM_EMAIL,
+  },
   images: {
     remotePatterns: [
       {
@@ -18,8 +22,8 @@ const nextConfig: NextConfig = {
     // Warning: This allows production builds to successfully complete even if
     // your project has ESLint errors.
     ignoreDuringBuilds: false,
-    dirs: ['pages', 'components', 'lib', 'src', 'app']
-  }
-};
+    dirs: ['pages', 'components', 'lib', 'src', 'app'],
+  },
+}
 
-export default nextConfig;
+export default nextConfig
